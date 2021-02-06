@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org"> 
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		
+		<title>Agendar Tarefa - Pastel System</title>
+		
+		<link href="/bootStrap/css/bootstrap.min.css" rel="stylesheet">
+	</head>
+
+	<style>
+	  	.bg-purple { background-color: var(--purple); }
+		.container { max-width: 960px;}
+		.border-top { border-top: 1px solid #e5e5e5; }
+		.border-bottom { border-bottom: 1px solid #e5e5e5; }
+		.border-top-gray { border-top-color: #adb5bd; }
+		
+		.box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
+		
+		.lh-condensed { line-height: 1.25; }
+			  
+	</style>
+
+  <body class="bg-light">
+
+	<nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
+		<form method="post" action="/api/v1/home">
+			<button class="navbar-brand btn btn-link" value="${session.userAcessando}">
+				<h1 class="h1 mb-3 font-weight-normal">Home</h1>
+			</button>
+		</form>
+		<div class="navbar-collapse offcanvas-collapse"
+			id="navbarsExampleDefault">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item">
+					<form method="post" action="/api/v1/home/usuarios/listar-usuario">
+							<button class="nav-link btn btn-link" value="${session.userAcessando}">Usuários</button>
+					</form>
+				</li>
+				<li class="nav-item active">
+					<form method="post" action="/api/v1/home/agendar-tarefa">
+						<button class="nav-link btn btn-link" value="${session.userAcessando}">
+							Agendar	Tarefa</button>
+					</form>
+				</li>
+			</ul>
+			<ul class="navbar-nav" style="margin-right: 10%;">
+				<li class="nav-item dropdown"><a
+					class="nav-link dropdown-toggle" id="dropdown01"
+					data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span th:text = "${session.userAcessando}"></span></a>
+					<div class="dropdown-menu" aria-labelledby="dropdown01">
+						<form method="Post" action="/api/v1/logout">
+							<button class="dropdown-item" type="submit">Sair
+								<span hidden="hidden" th:text = "${session.userAcessando}"></span>
+							</button>
+						</form>
+					</div></li>
+			</ul>
+		</div>
+	</nav>
+
+	<br><br><br><br>
+
+	<div class="container">
+	
+		<div class="alert alert-success" style="margin: 2% 10% 0 10%; display: none;" id ="alertSucesso" role="alert">
+				  <h2 id="sucesso" style="text-align: center; font-size: 1.4rem"></h2>
+		</div>
+		
+		<div class="alert alert-danger" style="margin: 2% 10% 0 10%; display: none;" id ="alertError" role="alert">
+			  <h2 id="error" style="text-align: center; font-size: 1.4rem"></h2>
+		</div>
+
+		<div
+			class="d-flex align-items-center p-3 my-3 text-white-50 bg-purple rounded box-shadow">
+			<svg xmlns="http://www.w3.org/2000/svg" style="margin-right: 1%;" width="35" height="30" fill="currentColor" class="bi bi-clipboard-plus" viewBox="0 0 16 16">
+			  <path fill-rule="evenodd" d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+			  <path fill-rule="evenodd" d="M9.5 1h-3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3zM8 7a.5.5 0 0 1 .5.5V9H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V10H6a.5.5 0 0 1 0-1h1.5V7.5A.5.5 0 0 1 8 7z"/>
+			</svg>
+			
+			<div class="lh-100">
+				<h6 class="mb-0 text-white lh-100">Agendar Tarefa</h6>
+				<small>Preencha os campos</small>
+			</div>
+		</div>
+
+		<div class="container">
+		
+			<form class="needs-validation" novalidate>
+				<div class="row">
+					<div class="col-md-12 mb-3">
+						<label for="tituloTarefa">Titulo da Tarefa</label> <input type="text"
+							class="form-control" id="tituloTarefa"
+							placeholder="Título da Tarefa" value="" maxlength="64" required>
+						<div class="invalid-feedback">Título da Tarefa é Obrigátorio.</div>
+					</div>
+
+				</div>
+
+				<div class="mb-3">
+					<label for="descricaoTarefa">Descrição da Tarefa</label>
+					<div class="input-group">
+						<textarea class="form-control" id="descricaoTarefa"
+							placeholder="Descreva da Tarefa" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" 
+							maxlength="254"></textarea>
+						<div class="invalid-feedback"   style="width: 100%;">
+							Descreva a tarefa é Obrigátorio.
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-8 mb-3">
+						<label for="usuarioResponsavel">Usuário Responsavel</label> <select
+							class="custom-select d-block w-100" id="userResponsavel">
+							<option value="0">Selecione o responsável</option>
+						</select>
+					</div>
+					<div class="col-md-4 mb-3">
+						<label for="nivelDePrioridade">Nivel de Prioridade</label> <select
+							class="custom-select d-block w-100" id="prioridade">
+							<option value="0">Selecione a Prioridade</option>
+							<option>ALTO</option>
+							<option>MEDIO</option>
+							<option>BAIXO</option>
+						</select>
+					</div>
+				</div>
+
+
+				<hr class="mb-4">
+				<button class="btn btn-primary btn-lg btn-block"
+					id="btnCadastrarTarefa" type=button onclick="cadastrarAgendamento()">Realizar Agendamento
+				</button>
+			</form>
+		</div>
+	</div>
+
+	<footer class="mastfoot mt-auto text-center" style="width: 100%; height: 50px; margin: auto; bottom: 0; position: fixed;">
+        <div class="inner">
+          <p>&copy; Pastel
+			System - DS</p>
+        </div>
+      </footer>
+
+</body>
+  
+  	<script type="text/javascript" src="/bootStrap/js/jquery.min.js"></script>	
+	<script type="text/javascript" src="/bootStrap/js/jqueryalert.min.js"></script>	
+   	<script type="text/javascript" src="/bootStrap/js/popper.min.js"></script>
+  	<script type="text/javascript" src="/bootStrap/js/bootstrap.min.js"></script>
+   	<script type="text/javascript" src="/bootStrap/js/holder.min.js"></script>
+   	
+   	<!-- scriptsOperation -->
+   	<script type="text/javascript" src="/scriptsOperation/agendarTarefa/formAgendarTarefa.js"></script>
+   	<script type="text/javascript" src="/scriptsOperation/limpaCamposForm.js"></script>
+   	
+</html>

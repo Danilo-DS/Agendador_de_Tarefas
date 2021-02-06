@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="pt-br" xmlns:th = "https://www.thymeleaf.org">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<!-- <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico"> -->
+		
+		<title>Home - Pastel System</title>
+		
+		<link href="/bootStrap/css/bootstrap.min.css" rel="stylesheet">
+		<link href="/bootStrap/css/fontawesome-all.min.css" rel="stylesheet">
+		<link href="/bootStrap/home.css" rel="stylesheet">
+
+		
+	</head>
+		
+	<body class="bg-light ">
+	
+		<nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
+				
+			<form method="post" action="/api/v1/home">
+				<button class="navbar-brand btn btn-link" value="${session.userAcessando}">
+				<h1 class="h1 mb-3 font-weight-normal">Home</h1>
+				</button>
+			</form>
+				
+			<div class="navbar-collapse offcanvas-collapse"
+				id="navbarsExampleDefault">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item ">
+						<form method="post" action="/api/v1/home/usuarios/listar-usuario">
+							<button class="nav-link btn btn-link" value="${session.userAcessando}">
+							Usuários</button>
+						</form>
+					</li>
+					<li class="nav-item">
+						<form method="post" action="/api/v1/home/agendar-tarefa">
+							<button class="nav-link btn btn-link" value="${session.userAcessando}">
+								Agendar	Tarefa</button>
+						</form>
+					</li>
+				</ul>
+				<ul class="navbar-nav" style="margin-right: 10%;">
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" id="dropdown01"
+						data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span th:text = "${session.userAcessando}"></span></a>
+						<div class="dropdown-menu" aria-labelledby="dropdown01">
+							<form method="Post" action="/api/v1/logout">
+								<button class="dropdown-item" type="submit">Sair
+									<span hidden="hidden" th:text = "${session.userAcessando}"></span>
+								</button>
+							</form>
+						</div></li>
+				</ul>
+			</div>
+		</nav>
+	
+		<br><br>
+	
+		<div class="container">
+		
+			<div class="alert alert-success" style="margin: 2% 10% 0 10%; display: none;" id ="alertSucesso" role="alert">
+				  <h2 id="sucesso" style="text-align: center; font-size: 1.4rem"></h2>
+			</div>
+			
+			<div class="alert alert-danger" style="margin: 2% 10% 0 10%; display: none;" id ="alertError" role="alert">
+				  <h2 id="error" style="text-align: center; font-size: 1.4rem"></h2>
+			</div>
+			
+			<div class="d-flex align-items-center p-3 my-3 text-white-50 bg-purple rounded box-shadow">
+				<svg xmlns="http://www.w3.org/2000/svg" style="margin-right: 1%;" width="35" height="30" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16">
+				  <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z"/>
+				</svg>
+				<div class="lh-100">
+					<h6 class="mb-0 text-white lh-100">Tarefas Agendadas</h6>
+					<small>Suas Tarefas</small>
+				</div>
+			</div>
+			
+			<table class="table table-striped ">
+				<thead>
+					<tr>
+						<th scope="col">Título</th>
+						<th scope="col">Usuario Responsáviel</th>
+						<th scope="col">Nível Prioridade</th>
+						<th scope="col">Situação Tarefa</th>
+					</tr>
+				</thead>
+				<tbody id = "table-view">
+					
+				</tbody>
+			</table>
+			
+		</div>
+
+	<footer class="mastfoot mt-auto text-center" style="width: 100%; height: 50px; margin: auto; bottom: 0; position: fixed;">
+        <div class="inner">
+          <p>&copy; Pastel
+			System - DS</p>
+        </div>
+      </footer>
+
+</body>
+	
+	
+	<!-- Modal Excluir -->
+	<div class="modal fade" id="modalExcluir" tabindex="-1" role="dialog"
+		aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="titleModal">Excluir Tarefa ?</h5>					
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger" data-dismiss="modal" id = "btnConfirmar"
+						onclick="deletarTarefa()">
+						<i class="fa fa-trash"></i> Confirmar
+					</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Modal Finalizar -->
+	<div class="modal fade" id="modalFinalizar" tabindex="-1" role="dialog"
+		aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="titleModal">Deseja Finalizar a  Tarefa?</h5>					
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger" data-dismiss="modal" id = "btnConfirmar"
+						onclick="finalizarTarefa()">Confirmar
+					</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Modal Cancelar -->
+	<div class="modal fade" id="modaCancelar" tabindex="-1" role="dialog"
+		aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="titleModal">Deseja Cancelar a Tarefa?</h5>					
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger" data-dismiss="modal" id = "btnConfirmar"
+						onclick="cancelarTarefa()">Confirmar
+					</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- Modal Editar -->
+	<div class="modal fade" id="modalEditar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <p class="modal-title" id="titleModalEditar" style="font-size: 16px;"> Editar Tarefa</p>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	      		<form class="needs-validation" novalidate>
+					
+					<div class="form-group">
+						<label for="Titulo">Título</label> 
+						<input type="text"
+							class="form-control" id="titulo-modal" placeholder="Informe o Titulo da Tarefa"
+							value="" maxlength="64" required="required">
+					</div>
+					
+					<div class="form-group">
+						<label for="descricao">Descrição</label> <textarea 
+							class="form-control" id="descricao-modal"
+							placeholder="Informe Descrição" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+							maxlength="254" ></textarea>
+					</div>
+					
+					<div class="row">
+						
+						<div class="col-md-4 mb-3">	
+							<div class="form-group">
+								<label for="userResponsavel">Responsável</label>
+								    <select class="form-control" id="user-modal" required="required">					    
+					            	</select>
+						 	</div>
+					 	</div>
+						
+						<div class="col-md-4 mb-3">
+							<div class="form-group">
+							<label for="prioridade">Prioridade</label>
+							    <select class="form-control" id="prioridade-modal" required="required">
+						    		<option>ALTO</option>
+						    		<option>MEDIO</option>
+						    		<option>BAIXO</option>					    
+				            	</select>
+					 		</div>
+						</div>
+						
+						<div class="col-md-4 mb-3">
+							<div class="form-group">
+							<label for="stuatusTarefa">Situação Tarefa</label>
+							    <input class="form-control" id="situacao-modal" disabled="disabled"/>
+					 		</div>
+						</div>
+						
+					</div>
+						
+					<div class="form-group">
+						<label for="datas">Datas</label>
+						<hr class="mb-4">
+					</div>	
+						
+					<div class="row">
+						<div class="col-md-4 mb-3">
+							<label for="dtCriacao">Criação</label> <input type="date"
+								class="form-control" id="dtCriacao-modal" placeholder=" Data de Criação"
+								disabled="disabled">
+						</div>
+						
+						<div class="col-md-4 mb-3">
+							<label for="dtFinalizacao">Finalização</label> <input type="date"
+								class="form-control" id="dtFinalizacao-modal" placeholder="Data de Finalização"
+								disabled="disabled">
+						</div>
+						
+						<div class="col-md-4 mb-3">
+							<label for="dtFinalizacao">Cancelamento</label> <input type="date"
+								class="form-control" id="dtCancelamento-modal" placeholder="Data de Cancelamento"
+								disabled="disabled">
+						</div>
+					</div>
+				</form>
+			</div>
+
+			<div class="modal-footer" id="btnCancelar">
+		        <button type="button" class="btn btn-primary" id="btnSalvar" onClick = "atualizarTarefa()"><i class="fa fa-folder"></i> Salvar</button>
+		       	<button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+	    	</div>
+    	   </div>
+    	</div>
+	</div>
+	
+	<script type="text/javascript" src="/bootStrap/js/jquery.min.js"></script>	
+	<script type="text/javascript" src="/bootStrap/js/jqueryalert.min.js"></script>
+	<script type="text/javascript" src="/bootStrap/js/popper.min.js"></script>
+	<script type="text/javascript" src="/bootStrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/bootStrap/js/holder.min.js"></script>
+	<script type="text/javascript" src="/bootStrap/js/offcanvas.js"></script>
+	
+	<!-- scriptsOperation -->
+	<script type="text/javascript" src="/scriptsOperation/agendarTarefa/listaTarefas.js"></script>
+	
+</html>
