@@ -8,15 +8,15 @@
 		<version>2.4.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>br.com.desafio_smn.application</groupId>
-	<artifactId>Desafio-SMN</artifactId>
+	<groupId>br.com.agendador_tafera.application</groupId>
+	<artifactId>Agendador-Tarefa</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Desafio-SMN</name>
-	<description>Desfaio SMN Spring Boot</description>
+	<name>Agendador-Tarefa</name>
+	<description>Agendador de Tarefa Spring Boot</description>
 
-	<!-- <properties>
+	<properties>
 		<java.version>11</java.version>
-	</properties> -->
+	</properties>
 
 	<dependencies>
 		<dependency>
