@@ -16,12 +16,8 @@ public class CarregaDadosBD implements ApplicationRunner {
 	
 	@Autowired
 	private UsuarioRepository userRespository;
-	
-	
-
     
     public CarregaDadosBD() {    }
-
 	 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {

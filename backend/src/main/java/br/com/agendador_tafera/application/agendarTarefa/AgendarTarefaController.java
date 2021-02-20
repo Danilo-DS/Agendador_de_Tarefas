@@ -1,5 +1,7 @@
 package br.com.agendador_tafera.application.agendarTarefa;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +35,12 @@ public class AgendarTarefaController {
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<?> findTask(@PathVariable Long id){
 		return ResponseEntity.ok(service.findTaskId(id));
+	}
+	
+	/* EndPoint Lista Tarefas por usuario*/
+	@GetMapping(value = "/{id}/usuario")
+	public ResponseEntity<List<?>> findTaskUser(@PathVariable Long id){
+		return ResponseEntity.ok(service.findTaskToUsuario(id));
 	}
 	
 	/* EndPoint Salvar Tarefa */

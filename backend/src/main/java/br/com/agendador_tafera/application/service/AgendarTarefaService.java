@@ -42,6 +42,12 @@ public class AgendarTarefaService {
 		return agendaRepository.findById(id).orElseThrow(() -> new AgendarTarefaException(Utilitarios.ErrorBuscarTarefa, HttpStatus.NOT_FOUND));
 	}
 	
+	/* Lista a tarefa de cada usuario */
+	public List<TarefaDTO> findTaskToUsuario(Long id) {
+		agendaRepository.findByUsuario(userService.findUserId(id));
+		return toDTO(agendaRepository.findByUsuario(userService.findUserId(id)));
+	}
+	
 	/*Salva uma tarefa e utiliza o serviço de email para enviar
 	 * um email ao usuario designado tarefa
 	 * @param Recebe um obj AgendarTarefa
