@@ -1,6 +1,12 @@
 package br.com.agendador_tafera.application.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+//import org.springframework.security.core.userdetails.UserDetails;
+//import org.springframework.security.core.userdetails.UserDetailsService;
+// org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import br.com.agendador_tafera.application.ModelConvert;
@@ -9,12 +15,14 @@ import br.com.agendador_tafera.application.modelDTO.UsuarioLoginDTO;
 import br.com.agendador_tafera.application.repository.UsuarioRepository;
 
 @Service
-public class LoginService {
+public class LoginService implements UserDetailsService {
 	
 	@Autowired
 	UsuarioRepository userRepository;
 	
 	Usuario usuario;
+	
+	UsuarioLoginDTO user;
 	
 	/* Valida se o email e a senha pertence a um usuario
 	 * @return obj do tipo Usuario*/
@@ -41,10 +49,21 @@ public class LoginService {
 		}
 		return false;
 	}
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		user =  toDTOLogin(userRepository.findByEmail(username));
+		
+		if(user == null) {
+			System.out.println("Usuario não está autenticado");
+			throw new UsernameNotFoundException("Error email ou senha invalido");
+		}
+		return user;
+	}
 	
 	/* Converte um Obj do tipo Usuario em um obj de UsuarioLoginDTO */ 
 	private UsuarioLoginDTO toDTOLogin(Usuario user) {
-		return ModelConvert.mapper().map(usuario, UsuarioLoginDTO.class);
+		return ModelConvert.mapper().map(user, UsuarioLoginDTO.class);
 	}
 	
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.agendador_tafera.application.model.Usuario;
+import br.com.agendador_tafera.application.repository.UsuarioRepository;
 import br.com.agendador_tafera.application.service.UsuarioService;
 
 @RestController
@@ -22,6 +23,9 @@ public class UsuarioController {
 	
 	@Autowired
 	private UsuarioService service;
+	
+	@Autowired
+	private UsuarioRepository r;
 	
 	/* EndPoint Listar todos os Usuarios*/
 	@GetMapping
@@ -38,7 +42,7 @@ public class UsuarioController {
 	/* EndPoint Salvar Usuarios*/
 	@PostMapping
 	@ResponseStatus(value = HttpStatus.CREATED)
-	public void save(Usuario user){
+	public void save(@RequestBody Usuario user){
 		service.saveUser(user);
 	}
 	
@@ -55,5 +59,13 @@ public class UsuarioController {
 		service.deleteUser(id);
 		return ResponseEntity.noContent().build(); 
 	}
-
+	
+	
+	@GetMapping(value = "/t/{email}")
+	public ResponseEntity<?> findemail(@PathVariable String email){
+		Usuario u = r.findByEmail(email);
+		System.out.println(u.toString());
+		return ResponseEntity.ok(u); 
+	}
+	
 }
