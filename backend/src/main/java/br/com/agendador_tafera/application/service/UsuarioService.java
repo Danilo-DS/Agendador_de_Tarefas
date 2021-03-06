@@ -35,13 +35,15 @@ public class UsuarioService {
 	
 	@Transactional
 	public void saveUser(Usuario user) {
+		user.setSenha(user.encriptPassword(user.getSenha()));
 		userRepository.save(user);
 	}
 	
 	@Transactional
-	public void updateUser(Usuario u, Long id) {
+	public void updateUser(Usuario user, Long id) {
+		user.setSenha(user.encriptPassword(user.getSenha()));
 		if(verifyUser(id)) {
-			userRepository.save(u);
+			userRepository.save(user);
 		}
 		else {
 			throw new UsuarioException(Utilitarios.ErrorAtualizarUsuario, HttpStatus.NOT_FOUND);

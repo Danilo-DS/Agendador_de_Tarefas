@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -53,4 +55,9 @@ public class Usuario implements Serializable {
 	
 	@Column(name = "TIPO_USUARIO", length = 1, nullable = false)
 	private String tipoUsuario;
+	
+	public String encriptPassword(String senha) {
+		senha = new BCryptPasswordEncoder().encode(senha);
+		return senha;
+	}
 }

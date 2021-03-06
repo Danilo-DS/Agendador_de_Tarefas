@@ -1,4 +1,4 @@
-package br.com.agendador_tafera.application.agendarTarefa;
+package br.com.agendador_tafera.application.controller;
 
 import java.util.List;
 

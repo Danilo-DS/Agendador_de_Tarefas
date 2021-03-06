@@ -1,8 +1,9 @@
-package br.com.agendador_tafera.application.controller.usuario;
+package br.com.agendador_tafera.application.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.agendador_tafera.application.model.Usuario;
 import br.com.agendador_tafera.application.repository.UsuarioRepository;
 import br.com.agendador_tafera.application.service.UsuarioService;
-
+//@CrossOrigin(origins = "http://localhost:3000",allowedHeaders = "Authorization")
 @RestController
 @RequestMapping(value = "/api/v1/usuarios")
 public class UsuarioController {
