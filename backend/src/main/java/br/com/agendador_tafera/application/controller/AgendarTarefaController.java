@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.agendador_tafera.application.model.AgendarTarefa;
 import br.com.agendador_tafera.application.service.AgendarTarefaService;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(value = "/api/v1/agendar-tarefa")
 public class AgendarTarefaController {
@@ -27,18 +30,21 @@ public class AgendarTarefaController {
 	
 	/* EndPoint listar todas as Tarefa */
 	@GetMapping
+	@PreAuthorize("hasRole('G')")
 	public ResponseEntity<?> listAll(){
 		return ResponseEntity.ok(service.listAllTask());
 	}
 	
 	/* EndPoint Buscar tarefa por id*/
 	@GetMapping(value = "/{id}")
+	@PreAuthorize("hasRole('G') or hasRole('U')")
 	public ResponseEntity<?> findTask(@PathVariable Long id){
 		return ResponseEntity.ok(service.findTaskId(id));
 	}
 	
 	/* EndPoint Lista Tarefas por usuario*/
 	@GetMapping(value = "/{id}/usuario")
+	@PreAuthorize("hasRole('G') or hasRole('U')")
 	public ResponseEntity<List<?>> findTaskUser(@PathVariable Long id){
 		return ResponseEntity.ok(service.findTaskToUsuario(id));
 	}
@@ -46,20 +52,22 @@ public class AgendarTarefaController {
 	/* EndPoint Salvar Tarefa */
 	@PostMapping
 	@ResponseStatus(value = HttpStatus.CREATED)
+	@PreAuthorize("hasRole('G')")
 	public void save(AgendarTarefa at){
 		service.saveTask(at);
 	}
 	
 	/* EndPoint Atualizar Tarefa */
 	@PutMapping(value = "/{id}")
+	@PreAuthorize("hasRole('G')")
 	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody AgendarTarefa at){
-		System.out.println("DEGUBD" + at.toString());
 		service.updateTask(id, at);
 		return ResponseEntity.ok().build();
 	}
 	
 	/* EndPoint Excluir Tarefa */
 	@DeleteMapping(value = "/{id}")
+	@PreAuthorize("hasRole('G')")
 	public ResponseEntity<?> delete(@PathVariable Long id){
 		service.deleteTask(id);
 		return ResponseEntity.noContent().build();

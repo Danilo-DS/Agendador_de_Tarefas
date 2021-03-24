@@ -1,0 +1,18 @@
+package br.com.agendador_tafera.application.config.security.payload;
+
+import java.io.Serializable;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class UserRequest implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
+	private String email;
+	private String senha;
+	
+}

@@ -8,7 +8,7 @@ function Home(){
 			
 		<TituloPage descricao = "Tarefas Agendadas" subDescricao = "Suas Tarefas" icon = {agendadasIcon} componente = {null}/>
 
-		<TableView/>
+		<TableView titulo1 = 'Nome' titulo2 = 'E-mail' titulo3 = 'Tel/Cel' titulo4 = 'Domínio' entidade = {[]}/>
 			
 		</div>
     );

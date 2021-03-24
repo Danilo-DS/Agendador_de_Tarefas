@@ -1,4 +1,4 @@
-package br.com.agendador_tafera.application;
+package br.com.agendador_tafera.application.config;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

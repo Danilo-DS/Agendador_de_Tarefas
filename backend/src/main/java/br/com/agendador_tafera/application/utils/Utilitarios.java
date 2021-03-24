@@ -4,7 +4,7 @@ public class Utilitarios {
 	
 	/* Status de Prioridade	*/
 	
-	public static final String prioridadeAlta = "ALTO";
+	public static final String PrioridadeAlta = "ALTO";
 	public static final String PrioridadeMedia = "MEDIO";
 	public static final String PrioridadeBaixa = "BAIXO";
 	
@@ -37,4 +37,9 @@ public class Utilitarios {
 	public static final String EmailFail = "FAIL";
 	public static final String EmailEnviado = "Email enviado com sucesso";
 	public static final String EmailFalhou = "Tarefa Agendada, mas ocorreu um erro ao enviar o e-mail";
+	
+	/* JWT */
+	
+	public static final String HeaderAuth = "Authorization";
+	public static final String ValueHeaderAuth = "Bearer ";
 }
