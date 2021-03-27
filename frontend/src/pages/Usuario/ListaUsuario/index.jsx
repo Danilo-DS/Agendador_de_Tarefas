@@ -30,7 +30,7 @@ function ListaUsuario(){
 
             <TableView titulo1 = 'Nome' titulo2 = 'E-mail' titulo3 = 'Tel/Cel' titulo4 = 'Domínio' entidade = {listUser} 
                 btnEditar = {<Button classe = "btn btn-info" id = "btnEditarUsuario" acaoButton = "" 
-                    valorButton = {null} tipo = "button" descricao = {<i className="fa fa-edit"></i>}/>}
+                valorButton = {null} tipo = "button" descricao = {<i className="fa fa-edit"></i>}/>}
                 btnDeletar = {<Button classe = "btn btn-danger" id = "btnDeletarUsuario" acaoButton = "" 
                 valorButton = {null} tipo = "button" descricao = {<i className="fa fa-trash"></i>}/>}
                 />

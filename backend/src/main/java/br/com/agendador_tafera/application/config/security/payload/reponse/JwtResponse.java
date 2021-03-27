@@ -14,13 +14,13 @@ public class JwtResponse {
 	private String type;
 	private Long id;
 	private String email;
-	private List<String> permissao;
+	private String permissao;
 	
 	public JwtResponse(String token, Long id, String email, List<String> permissao) {
 		this.token = token;
 		this.type = Utilitarios.ValueHeaderAuth;
 		this.id = id;
 		this.email = email;
-		this.permissao = permissao;
+		this.permissao = permissao.get(0);
 	}
 }

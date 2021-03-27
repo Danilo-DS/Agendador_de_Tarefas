@@ -26,14 +26,14 @@ public class UsuarioController {
 	
 	/* EndPoint Listar todos os Usuarios*/
 	@GetMapping
-	@PreAuthorize("hasAnyRole('ROLE_G')")
+	@PreAuthorize("hasRole('ROLE_G')")
 	public ResponseEntity<?> listAll(){
 		return ResponseEntity.ok(service.listAllUsers());
 	}
 	
 	/* EndPoint Buscar Usuarios por id*/
 	@GetMapping(value = "/{id}")
-	@PreAuthorize("hasRole('G')")
+	@PreAuthorize("hasRole('ROLE_G')")
 	public ResponseEntity<?> findUser(@PathVariable Long id){
 		return ResponseEntity.ok(service.findUserId(id)); 
 	}
@@ -62,7 +62,7 @@ public class UsuarioController {
 		return ResponseEntity.noContent().build(); 
 	}
 	
-	@PreAuthorize("hasRole('G') or hasRole('U')")
+	@PreAuthorize("hasRole('ROLE_G') or hasRole('ROLE_U')")
 	@GetMapping(value = "/t/test")
 	public ResponseEntity<?> findall(){
 		return ResponseEntity.ok(service.listAllUsers()); 

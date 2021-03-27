@@ -4,8 +4,6 @@ import java.io.IOException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -21,7 +19,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import br.com.agendador_tafera.application.config.security.payload.UserLogin;
 import br.com.agendador_tafera.application.service.LoginService;
 import br.com.agendador_tafera.application.utils.Utilitarios;
 
@@ -51,13 +48,13 @@ public class AuthTokenFilter extends OncePerRequestFilter{
 				
 				String email = jwtUtils.getEmailFromTokenJwt(tokeJwt);
 				
-				UserDetails userLogin = loginService.loadUserByUsername(email);
+				UserDetails userDetails = loginService.loadUserByUsername(email);
 				
-				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userLogin, null, userLogin.getAuthorities());
+				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 				authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 				SecurityContextHolder.getContext().setAuthentication(authToken);
 			}
-				
+			filterChain.doFilter(request, response);	
 		}
 		catch (AuthenticationException e) {
 			authEntryPointJwt.commence(request, response, e);
@@ -65,7 +62,7 @@ public class AuthTokenFilter extends OncePerRequestFilter{
 		catch (Exception e) {
 			log.error("Error: Autenticação Falhou: " + e.getMessage());
 		}
-		filterChain.doFilter(request, response);
+		
 	}
 
 	private String parseJwt(HttpServletRequest req) {

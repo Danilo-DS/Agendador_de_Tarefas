@@ -25,9 +25,6 @@ function TableView(props){
 									<td>{props.btnCancelar}</td>
 								</tr>
 							)
-						}
-						{
-							
 						}	
 					</tbody>
 		</table>

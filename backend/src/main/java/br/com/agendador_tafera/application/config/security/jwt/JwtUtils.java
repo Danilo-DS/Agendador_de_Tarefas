@@ -1,6 +1,7 @@
 package br.com.agendador_tafera.application.config.security.jwt;
 
 import java.util.Date;
+import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +12,10 @@ import org.springframework.stereotype.Component;
 import br.com.agendador_tafera.application.config.security.payload.UserLogin;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.Data;
 
 @Component
+@Data
 public class JwtUtils {
 	
 	@Value("${jwt.secret}")
@@ -22,7 +25,6 @@ public class JwtUtils {
 	private long jwtExpiration;
 	
 	private static final Logger log = LoggerFactory.getLogger(JwtUtils.class);
-	
 	private Date timeToken = null;
 	
 	public String gerarTokenJwt(Authentication auth) {

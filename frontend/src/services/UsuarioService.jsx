@@ -1,5 +1,5 @@
 import axios from 'axios';
-import Utils from '../util/Util'
+import {listarUsuarios} from '../util'
 
 const urlBase = "http://localhost:8080/api/v1";
 
@@ -7,7 +7,7 @@ class UsuarioService{
 
     getUsuarios(){
        // console.log(urlBase + "/usuarios",)
-        return axios.get(urlBase + "/usuarios",{Headers:{ "Authorization": 'Basic c3lzdGVtc2NoZWR1bGVAZ21haWwuY29tLmJyOjEyMw=='}});
+        return axios.get(urlBase + listarUsuarios,{Headers:{ "Authorization": 'Basic c3lzdGVtc2NoZWR1bGVAZ21haWwuY29tLmJyOjEyMw=='}});
     }
 
     getUsuarios2(){

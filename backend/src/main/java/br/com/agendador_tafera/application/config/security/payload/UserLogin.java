@@ -29,7 +29,7 @@ public class UserLogin implements UserDetails {
 	public static UserLogin builder(UserLogin user) {
 		
 		List<GrantedAuthority> role = new ArrayList<>();
-		role.add(new SimpleGrantedAuthority(user.getTipo()));
+		role.add(new SimpleGrantedAuthority(("ROLE_"+user.getTipo()).trim()));
 		
 		return new UserLogin(
 					user.getId(),
