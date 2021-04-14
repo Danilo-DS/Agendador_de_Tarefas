@@ -40,7 +40,7 @@ public class UsuarioController {
 	
 	/* EndPoint Salvar Usuarios*/
 	@PostMapping
-	@PreAuthorize("hasRole('G')")
+	@PreAuthorize("hasRole('ROLE_G')")
 	@ResponseStatus(value = HttpStatus.CREATED)
 	public void save(@RequestBody Usuario user){
 		service.saveUser(user);
@@ -48,7 +48,7 @@ public class UsuarioController {
 	
 	/* EndPoint Atualizar dados do Usuario*/
 	@PutMapping(value = "/{id}")
-	@PreAuthorize("hasRole('G') or hasRole('U')")
+	@PreAuthorize("hasRole('ROLE_G') or hasRole('ROLE_U')")
 	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Usuario user){
 		service.updateUser(user, id);
 		return ResponseEntity.ok().build();
@@ -56,16 +56,10 @@ public class UsuarioController {
 	
 	/* EndPoint Exclusão do usuario*/
 	@DeleteMapping(value = "/{id}")
-	@PreAuthorize("hasRole('G')")
+	@PreAuthorize("hasRole('ROLE_G')")
 	public ResponseEntity<?> delete(@PathVariable Long id){
 		service.deleteUser(id);
 		return ResponseEntity.noContent().build(); 
 	}
-	
-	@PreAuthorize("hasRole('ROLE_G') or hasRole('ROLE_U')")
-	@GetMapping(value = "/t/test")
-	public ResponseEntity<?> findall(){
-		return ResponseEntity.ok(service.listAllUsers()); 
-	}
-	
+			
 }

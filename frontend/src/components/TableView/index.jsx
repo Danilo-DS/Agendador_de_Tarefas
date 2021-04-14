@@ -1,6 +1,5 @@
 
 function TableView(props){	
-
 	return (
         <table className="table table-striped ">
 					<thead>

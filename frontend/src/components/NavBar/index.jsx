@@ -1,6 +1,12 @@
 import {NavDropdown}  from 'react-bootstrap';
 import {Link} from 'react-router-dom';
+import LoginService from '../../services/LoginService';
+
 function NavBar(props){
+	function deletarCredenciais(){
+		LoginService.logout();
+	}
+
     return(
 		<div>
 			<nav className="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
@@ -22,7 +28,7 @@ function NavBar(props){
 					<NavDropdown title="Opções" id="collasible-nav-dropdown">
 						<NavDropdown.Item href="#action/3.1">Perfil</NavDropdown.Item>
 						<NavDropdown.Divider />
-						<NavDropdown.Item href="/">Sair</NavDropdown.Item>
+						<NavDropdown.Item href="/" onClick = {deletarCredenciais} >Sair</NavDropdown.Item>
 					</NavDropdown>
 					</ul>
 				</div>

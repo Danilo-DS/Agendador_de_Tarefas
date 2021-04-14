@@ -30,21 +30,21 @@ public class AgendarTarefaController {
 	
 	/* EndPoint listar todas as Tarefa */
 	@GetMapping
-	@PreAuthorize("hasRole('G')")
+	@PreAuthorize("hasRole('ROLE_G')")
 	public ResponseEntity<?> listAll(){
 		return ResponseEntity.ok(service.listAllTask());
 	}
 	
 	/* EndPoint Buscar tarefa por id*/
 	@GetMapping(value = "/{id}")
-	@PreAuthorize("hasRole('G') or hasRole('U')")
+	@PreAuthorize("hasRole('ROLE_G') or hasRole('ROLE_U')")
 	public ResponseEntity<?> findTask(@PathVariable Long id){
 		return ResponseEntity.ok(service.findTaskId(id));
 	}
 	
 	/* EndPoint Lista Tarefas por usuario*/
 	@GetMapping(value = "/{id}/usuario")
-	@PreAuthorize("hasRole('G') or hasRole('U')")
+	@PreAuthorize("hasRole('ROLE_G') or hasRole('ROLE_U')")
 	public ResponseEntity<List<?>> findTaskUser(@PathVariable Long id){
 		return ResponseEntity.ok(service.findTaskToUsuario(id));
 	}
@@ -52,14 +52,14 @@ public class AgendarTarefaController {
 	/* EndPoint Salvar Tarefa */
 	@PostMapping
 	@ResponseStatus(value = HttpStatus.CREATED)
-	@PreAuthorize("hasRole('G')")
+	@PreAuthorize("hasRole('ROLE_G')")
 	public void save(AgendarTarefa at){
 		service.saveTask(at);
 	}
 	
 	/* EndPoint Atualizar Tarefa */
 	@PutMapping(value = "/{id}")
-	@PreAuthorize("hasRole('G')")
+	@PreAuthorize("hasRole('ROLE_G')")
 	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody AgendarTarefa at){
 		service.updateTask(id, at);
 		return ResponseEntity.ok().build();
@@ -67,7 +67,7 @@ public class AgendarTarefaController {
 	
 	/* EndPoint Excluir Tarefa */
 	@DeleteMapping(value = "/{id}")
-	@PreAuthorize("hasRole('G')")
+	@PreAuthorize("hasRole('ROLE_G')")
 	public ResponseEntity<?> delete(@PathVariable Long id){
 		service.deleteTask(id);
 		return ResponseEntity.noContent().build();
