@@ -1,6 +1,5 @@
 import LoginService from '../../services/LoginService';
 import {salvarCredenciais} from '../../util';
-//import "../../assets/parcial/Login/style.css"
 
 function LoginPage(){
 

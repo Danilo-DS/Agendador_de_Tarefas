@@ -11,18 +11,23 @@ import {homePath} from '../util';
 import {listaUsuarioPath} from '../util';
 import {cadastarUsuarioPath} from '../util';
 import {cadastarTarefaPath} from '../util';
+import Alerte from '../components/Alerts'
+import PageNotFound from '../pages/PageNotFound';
 
 
 function Routes(){
     return(
         <Switch>
             <Route path = {loginPath} exact component={Login}/>
+            
             <NavBar>
-                <PrivateRoutes path = {homePath} component={Home}/>       
-                <PrivateRoutes path = {cadastarTarefaPath} component={Agendar}/>
-                <PrivateRoutes path = {cadastarUsuarioPath} component={CadastrarUsuarios}/>
-                <PrivateRoutes path = {listaUsuarioPath} component={ListarUsuarios}/>    
-            </NavBar>           
+                <PrivateRoutes path = {homePath} component = {Home}/>       
+                <PrivateRoutes path = {cadastarTarefaPath} component = {Agendar}/>
+                <PrivateRoutes path = {cadastarUsuarioPath} component = {CadastrarUsuarios}/>
+                <PrivateRoutes path = {listaUsuarioPath} component = {ListarUsuarios}/>
+                {/* <Route path = "*"  component = {PageNotFound}/> */}
+                {/* <Route path = "/alert"  component = {Alerte}/>    */}
+            </NavBar>            
         </Switch>
     );
 

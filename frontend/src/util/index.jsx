@@ -18,16 +18,18 @@ export const deletarUsuarios = "/usuarios";
 //Tarefas
 export const listarTarefas = "/agendar-tarefa";
 
-export const listarPorId = "/agendar-tarefa/";
+export const listarTarefaPor = "/agendar-tarefa/";
 export const usuarios = "/usuario";
 
 export const buscarTarefa = "/agendar-tarefa/";
 
 export const salvarTarefa = "/agendar-tarefa";
 
+export const atualizarTarefa = "/agendar-tarefa";
+
 export const deletarTarefa = "/agendar-tarefa/";
 
-//Monta Header
+//Mount Header
 export default function montaHerader(){
     let type = localStorage.getItem('type');
     let token = localStorage.getItem('token');
@@ -35,7 +37,7 @@ export default function montaHerader(){
     return header;
 }
 
-//Salva Credenciais
+//Save Credenciais
 export function salvarCredenciais(credenciais){
     localStorage.setItem("id",JSON.stringify(credenciais.id));
     localStorage.setItem("email",JSON.stringify(credenciais.email));
@@ -44,7 +46,7 @@ export function salvarCredenciais(credenciais){
     localStorage.setItem("type",JSON.stringify(credenciais.type));
 }
 
-//Deletar Credenciais
+//Delete Credenciais
 export function deletarCredenciais(){
     localStorage.clear();
 }
@@ -55,3 +57,8 @@ export const homePath = "/home";
 export const listaUsuarioPath = "/listar-usuarios";
 export const cadastarUsuarioPath = "/cadastrar-usuario";
 export const cadastarTarefaPath = "/agendar";
+
+
+//Type Table
+export const tabelaUsuario = "user";
+export const tabelaTarefa = "task";

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.agendador_tafera.application.model.AgendarTarefa;
 import br.com.agendador_tafera.application.service.AgendarTarefaService;
 
-@CrossOrigin(origins = "*")
+
 @RestController
 @RequestMapping(value = "/api/v1/agendar-tarefa")
 public class AgendarTarefaController {
@@ -53,7 +53,7 @@ public class AgendarTarefaController {
 	@PostMapping
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@PreAuthorize("hasRole('ROLE_G')")
-	public void save(AgendarTarefa at){
+	public void save(@RequestBody AgendarTarefa at){
 		service.saveTask(at);
 	}
 	

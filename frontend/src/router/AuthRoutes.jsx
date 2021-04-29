@@ -1,5 +1,6 @@
 import { Route, Redirect } from "react-router-dom";
 import {homePath} from '../util';
+import Alerte from '../components/Alerts'
 
 const permissao = (path) => {
     let pathsUser = [homePath]
@@ -25,8 +26,10 @@ export const PrivateRoutes = ({component : Component, ...rest}) => {
             permissao(rest.path) ? 
             (<Component {...props} />)
             :
-            (<Redirect to = {{pathname : "/", state : {from : props.location} }}/>) 
+            (<Alerte />) // Analisar
             
         }
     />
+    //<Redirect to = {{pathname : "/", state : {from : props.location} }}/>
+    //<Alerte tipo = "danger" exibir = {true} mensagem = "Ops! Você não tem permissão :(" />
 }
