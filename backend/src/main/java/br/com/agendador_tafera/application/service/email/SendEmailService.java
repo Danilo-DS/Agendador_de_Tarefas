@@ -1,4 +1,4 @@
-package br.com.agendador_tafera.application.service;
+package br.com.agendador_tafera.application.service.email;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -25,14 +25,14 @@ public class SendEmailService{
 		  msg.setSubject(Titulo);
 		  msg.setText(corpoMensage);
 		  msg.setTo(emailDesnitario);
-		  msg.setFrom(Utilitarios.EmailAPI);
+		  msg.setFrom(Utilitarios.EMAIL_API);
 		 
 		try {
 			sendMail.send(msg);
-			return Utilitarios.EmailOk;
+			return Utilitarios.EMAIL_OK;
 		}
 		catch (Exception e) {
-			return Utilitarios.EmailFail;
+			return Utilitarios.EMAIL_FAIL;
 		}
 		
 	}

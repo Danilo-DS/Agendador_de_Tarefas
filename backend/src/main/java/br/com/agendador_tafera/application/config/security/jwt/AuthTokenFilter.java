@@ -7,8 +7,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -19,10 +17,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import br.com.agendador_tafera.application.service.LoginService;
+import br.com.agendador_tafera.application.service.usuario.LoginService;
 import br.com.agendador_tafera.application.utils.Utilitarios;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@Slf4j
 public class AuthTokenFilter extends OncePerRequestFilter{
 	
 	@Autowired
@@ -34,10 +34,6 @@ public class AuthTokenFilter extends OncePerRequestFilter{
 	@Autowired
 	private AuthEntryPointJwt authEntryPointJwt;
 
-	//private UsernamePasswordAuthenticationToken authToken;
-	
-	private static final Logger log = LoggerFactory.getLogger(AuthTokenFilter.class);
-	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
@@ -66,8 +62,8 @@ public class AuthTokenFilter extends OncePerRequestFilter{
 	}
 
 	private String parseJwt(HttpServletRequest req) {
-		String headerRequest = req.getHeader(Utilitarios.HeaderAuth);
-		if(StringUtils.hasText(headerRequest) && headerRequest.startsWith(Utilitarios.ValueHeaderAuth)) {
+		String headerRequest = req.getHeader(Utilitarios.HEADER_AUTH);
+		if(StringUtils.hasText(headerRequest) && headerRequest.startsWith(Utilitarios.VALUE_HEADER_AUTH)) {
 			return headerRequest.substring(7, headerRequest.length());
 		}
 		return null;

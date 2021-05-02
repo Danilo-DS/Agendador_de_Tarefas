@@ -19,7 +19,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import br.com.agendador_tafera.application.config.security.jwt.AuthEntryPointJwt;
 import br.com.agendador_tafera.application.config.security.jwt.AuthTokenFilter;
-import br.com.agendador_tafera.application.service.LoginService;
+import br.com.agendador_tafera.application.service.usuario.LoginService;
 
 @Configuration
 @EnableWebSecurity

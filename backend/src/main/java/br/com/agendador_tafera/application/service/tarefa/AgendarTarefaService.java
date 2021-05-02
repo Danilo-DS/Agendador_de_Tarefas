@@ -1,5 +1,6 @@
-package br.com.agendador_tafera.application.service;
+package br.com.agendador_tafera.application.service.tarefa;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,12 +9,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.agendador_tafera.application.ModelConvert;
+import br.com.agendador_tafera.application.config.ModelConvert;
+import br.com.agendador_tafera.application.enums.StatusTarefa;
 import br.com.agendador_tafera.application.exception.agendarTarefa.AgendarTarefaException;
 import br.com.agendador_tafera.application.model.AgendarTarefa;
 import br.com.agendador_tafera.application.model.Usuario;
 import br.com.agendador_tafera.application.modelDTO.TarefaDTO;
 import br.com.agendador_tafera.application.repository.AgendaTarefaRepository;
+import br.com.agendador_tafera.application.service.email.SendEmailService;
+import br.com.agendador_tafera.application.service.usuario.UsuarioService;
 import br.com.agendador_tafera.application.utils.Utilitarios;
 
 @Service
@@ -39,7 +43,7 @@ public class AgendarTarefaService {
 	
 	@Transactional(readOnly = true)
 	public AgendarTarefa findTaskId(Long id) {
-		return agendaRepository.findById(id).orElseThrow(() -> new AgendarTarefaException(Utilitarios.ErrorBuscarTarefa, HttpStatus.NOT_FOUND));
+		return agendaRepository.findById(id).orElseThrow(() -> new AgendarTarefaException(Utilitarios.ERROR_BUSCAR_TAREFA, HttpStatus.NOT_FOUND));
 	}
 	
 	/* Lista a tarefa de cada usuario */
@@ -50,15 +54,15 @@ public class AgendarTarefaService {
 	
 	/*Salva uma tarefa e utiliza o serviço de email para enviar
 	 * um email ao usuario designado tarefa
-	 * @param Recebe um obj AgendarTarefa
+	 * @Param Recebe um obj AgendarTarefa
 	 */
 	@Transactional
 	public void saveTask(AgendarTarefa at) {
-		if(userService.verifyUser(at.getUsuario().getId())){
-			user = userService.findUserId(at.getUsuario().getId());
+		if(userService.verifyUser(at.getUsuario().get(0).getId())){
+			user = userService.findUserId(at.getUsuario().get(0).getId());
 			at.setDtCriacaoTarefa(at.convertData());
-			at.setUsuario(user);
-			at.setStatusTarefa(Utilitarios.TarefaAgendada);
+			at.setUsuario(Arrays.asList(user));
+			at.setStatusTarefa(StatusTarefa.AGENDADA);
 			agendaRepository.save(at);
 			
 			String respEmail = emailService.sendMail(
@@ -66,15 +70,15 @@ public class AgendarTarefaService {
 						"Descrição da Tarefa: " + at.getDescricao() + "\n"
 						+ "Nével de Prioridade: " + at.getPrioridade() + "\n"
 						+ "Situação da Tarefa: " + at.getStatusTarefa() + "\n",
-						at.getUsuario().getEmail()						
+						at.getUsuario().get(0).getEmail()						
 					);
 			
-			if (respEmail.equals(Utilitarios.EmailFail)) {
-				new AgendarTarefaException(Utilitarios.EmailFail, HttpStatus.FAILED_DEPENDENCY);
+			if (respEmail.equals(Utilitarios.EMAIL_FAIL)) {
+				new AgendarTarefaException(Utilitarios.EMAIL_FALHOU, HttpStatus.FAILED_DEPENDENCY);
 			}
 		}
 		else {
-			throw new AgendarTarefaException(Utilitarios.ErrorSalvarTarefa, HttpStatus.NOT_FOUND);
+			throw new AgendarTarefaException(Utilitarios.ERROR_SALVAR_TAREFA, HttpStatus.NOT_FOUND);
 		}
 	}
 	
@@ -86,8 +90,8 @@ public class AgendarTarefaService {
 		
 		String datasTarefas = ""; //recebe qual tipo de data vai ser passado no email.
 		
-		if (verifyTask(id) && at.getStatusTarefa().equals(Utilitarios.TarefaFinalizada)) { /*Condição para finalização tarefa, verifica se a tarefa existe e verifica o atributo
-		 																					* statusTarefa do obj recebido na request */
+		if (verifyTask(id) && at.getStatusTarefa().compareTo(StatusTarefa.AGENDADA) == 1 ) { 
+		 																					
 			agendar = agendaRepository.findById(id).get();
 			agendar.setStatusTarefa(at.getStatusTarefa());
 			agendar.setDtFinalizacaoTarefa(agendar.convertData());
@@ -97,8 +101,8 @@ public class AgendarTarefaService {
 			datasTarefas = "Data Finalização: " + agendar.getDtFinalizacaoTarefa();
 			
 		}
-		else if(verifyTask(id) && at.getStatusTarefa().equals(Utilitarios.TarefaCancelada)) {/*Condição para cancelamento tarefa, verifica se a tarefa existe e verifica o atributo
-																							  *statusTarefa do obj recebido na request é iqual a CANCELADA */
+		else if(verifyTask(id) && at.getStatusTarefa().compareTo(StatusTarefa.CANCELADA) == 1) {
+																							  
 			agendar = agendaRepository.findById(id).get();
 			agendar.setStatusTarefa(at.getStatusTarefa());
 			agendar.setDtCancelamentoTarefa(agendar.convertData());
@@ -108,33 +112,33 @@ public class AgendarTarefaService {
 			datasTarefas = "Data Cancelamento: " + agendar.getDtCancelamentoTarefa();
 			
 		}
-		else if(verifyTask(id) && userService.verifyUser(at.getUsuario().getId())) {/*Condição para atualizar informações da tarefa, verifica se a tarefa existe 
-		 																			 *e se o usuario resonsavel por ela também existe. */
+		else if(verifyTask(id) && userService.verifyUser(at.getUsuario().get(0).getId())) { 
+		 																			
 			
-			user = userService.findUserId(at.getUsuario().getId());
-			at.setUsuario(user);
+			user = userService.findUserId(at.getUsuario().get(0).getId());
+			at.setUsuario(Arrays.asList(user));
 			agendar = at;
 			
 			agendaRepository.save(at);
 			datasTarefas = "Data Criação: " + at.getDtCriacaoTarefa();
 		}
 		else {
-			throw new AgendarTarefaException(Utilitarios.ErrorAtualizarTarefa, HttpStatus.NOT_FOUND); //Se nenhum da condições acima não for atendidas será lançada uma exceção
-		}																							   //Informando um problema ao atualizar a tarefa*/
+			throw new AgendarTarefaException(Utilitarios.ERROR_ATUALIZAR_TAREFA, HttpStatus.NOT_FOUND); 
+		}																							  
 		
 		
 		/* Se uma das condições acima for aceita e não lançar exceção
-		 * é chamado o serviço de email*/
+		 * é chamado o serviço de email */
 		String respEmail = emailService.sendMail(
 				agendar.getTitulo(),
 				"Descrição da Tarefa: " + agendar.getDescricao() + "\n"
 				+ "Nével de Prioridade: " + agendar.getPrioridade() + "\n"
 				+ "Situação da Tarefa: " + agendar.getStatusTarefa() + "\n"
 				+ datasTarefas,
-				agendar.getUsuario().getEmail());
+				agendar.getUsuario().get(0).getEmail());
 		
-		if (respEmail.equals(Utilitarios.EmailFail)) { //Verifica se o email foi enviado, caso contrario lança exceção
-			throw new AgendarTarefaException(Utilitarios.EmailFail, HttpStatus.FAILED_DEPENDENCY);
+		if (respEmail.equals(Utilitarios.EMAIL_FAIL)) {
+			throw new AgendarTarefaException(Utilitarios.EMAIL_FALHOU_ATUALIZACAO, HttpStatus.FAILED_DEPENDENCY);
 		}
 		
 	}
@@ -146,7 +150,7 @@ public class AgendarTarefaService {
 			agendaRepository.deleteById(id);
 		}
 		else {
-			throw new AgendarTarefaException(Utilitarios.ErrorDeletarTarefa, HttpStatus.NOT_FOUND);
+			throw new AgendarTarefaException(Utilitarios.ERROR_DELETAR_TAREFA, HttpStatus.NOT_FOUND);
 		}
 		
 	}

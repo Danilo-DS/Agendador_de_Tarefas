@@ -4,42 +4,43 @@ public class Utilitarios {
 	
 	/* Status de Prioridade	*/
 	
-	public static final String PrioridadeAlta = "ALTO";
-	public static final String PrioridadeMedia = "MEDIO";
-	public static final String PrioridadeBaixa = "BAIXO";
+	public static final String PRIORIDADE_ALTA = "ALTO";
+	public static final String PRIORIDADE_MEDIA = "MEDIO";
+	public static final String PRIORIDADE_BAIXA = "BAIXO";
 	
 	/* Status da Tarefa */
 	
-	public static final String TarefaFinalizada = "FINALIZADA";
-	public static final String TarefaAgendada = "AGENDADA";
-	public static final String TarefaCancelada = "CANCELADA";
+	public static final String TAREFA_FINALIZADA = "FINALIZADA";
+	public static final String TAREFA_AGENDADA = "AGENDADA";
+	public static final String TAREFA_CANCELADA = "CANCELADA";
 	
 	/* Mensagens e Exceções */
 	
 	/* Usuario */
-	public static final String ErrorDeletarUsuario = "Erro ao deletar usuario";
-	public static final String ErrorUsuarioAssociadoTarefa = "Usuario está responsavel por uma tarefa";
-	public static final String ErrorAtualizarUsuario = "Não foi possível atualizar o usuario";
-	public static final String ErrorBuscarUsuario = "Erro usuario não encontrado";
-	public static final String UsuarioGestor = "G";
-	public static final String UsuarioComum = "U";
-	public static final String UsuarioON = "userAcessando";
+	public static final String ERROR_DELETAR_USUARIO = "Erro ao deletar usuario";
+	public static final String ERROR_USUARIO_ASSOCIADO_TAREFA = "Usuario está responsavel por uma tarefa";
+	public static final String ERROR_ATUALIZAR_USUARIO = "Não foi possível atualizar o usuario";
+	public static final String ERROR_BUSCAR_USUARIO = "Erro usuario não encontrado";
+//	public static final String UsuarioGestor = "G";
+//	public static final String UsuarioComum = "U";
+//	public static final String UsuarioON = "userAcessando";
 	
 	/* Tarefa */
-	public static final String ErrorDeletarTarefa = "Tarefa não Encontrada, exclusão não realizada";
-	public static final String ErrorAtualizarTarefa = "Erro ao Atualizar Tarefa, Tarefa ou Usuario Responsável não encontrada";
-	public static final String ErrorBuscarTarefa = "Erro Tarefa não Encontrada";
-	public static final String ErrorSalvarTarefa = "Erro ao Salvar Tarefa, Usuario Responsável não encontrada";
+	public static final String ERROR_DELETAR_TAREFA = "Tarefa não Encontrada, exclusão não realizada";
+	public static final String ERROR_ATUALIZAR_TAREFA = "Erro ao Atualizar Atividade, Atividade ou Responsável não encontrado";
+	public static final String ERROR_BUSCAR_TAREFA = "Erro Tarefa não Encontrada";
+	public static final String ERROR_SALVAR_TAREFA = "Erro ao Agendar Atividade, Responsável não encontrada";
 	
-	/* Email da API */
-	public static final String EmailAPI = "pastel.systemcompany@gmail.com";
-	public static final String EmailOk = "OK";
-	public static final String EmailFail = "FAIL";
-	public static final String EmailEnviado = "Email enviado com sucesso";
-	public static final String EmailFalhou = "Tarefa Agendada, mas ocorreu um erro ao enviar o e-mail";
+	/* EMAIL da API */
+	public static final String EMAIL_API = "pastel.systemcompany@gmail.com";
+	public static final String EMAIL_OK = "OK";
+	public static final String EMAIL_FAIL = "FAIL";
+	public static final String EMAIL_ENVIADO = "E-mail enviado com sucesso";
+	public static final String EMAIL_FALHOU = "Atividade Agendada !, mas ocorreu um erro ao enviar o e-mail";
+	public static final String EMAIL_FALHOU_ATUALIZACAO = "Ativdade Atualizada !, mas ocorreu um erro ao enviar o e-mail";
 	
 	/* JWT */
 	
-	public static final String HeaderAuth = "Authorization";
-	public static final String ValueHeaderAuth = "Bearer ";
+	public static final String HEADER_AUTH = "Authorization";
+	public static final String VALUE_HEADER_AUTH = "Bearer ";
 }

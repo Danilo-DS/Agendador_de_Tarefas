@@ -1,4 +1,4 @@
-package br.com.agendador_tafera.application.service;
+package br.com.agendador_tafera.application.service.usuario;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.agendador_tafera.application.ModelConvert;
+import br.com.agendador_tafera.application.config.ModelConvert;
 import br.com.agendador_tafera.application.exception.usuario.UsuarioException;
 import br.com.agendador_tafera.application.model.Usuario;
 import br.com.agendador_tafera.application.modelDTO.UsuarioDTO;
@@ -30,7 +30,7 @@ public class UsuarioService {
 	@Transactional(readOnly = true)
 	public Usuario findUserId(Long id) {
 		Optional<Usuario> user = userRepository.findById(id);
-		return user.orElseThrow(() -> new UsuarioException(Utilitarios.ErrorBuscarUsuario, HttpStatus.NOT_FOUND));
+		return user.orElseThrow(() -> new UsuarioException(Utilitarios.ERROR_BUSCAR_USUARIO, HttpStatus.NOT_FOUND));
 	}
 	
 	@Transactional
@@ -46,7 +46,7 @@ public class UsuarioService {
 			userRepository.save(user);
 		}
 		else {
-			throw new UsuarioException(Utilitarios.ErrorAtualizarUsuario, HttpStatus.NOT_FOUND);
+			throw new UsuarioException(Utilitarios.ERROR_ATUALIZAR_USUARIO, HttpStatus.NOT_FOUND);
 		}
 	}
 	
@@ -56,7 +56,7 @@ public class UsuarioService {
 			userRepository.deleteById(id);
 		}
 		else {
-			throw new UsuarioException(Utilitarios.ErrorDeletarUsuario + " " + Utilitarios.ErrorBuscarUsuario, HttpStatus.NOT_FOUND);
+			throw new UsuarioException(Utilitarios.ERROR_DELETAR_USUARIO, HttpStatus.NOT_FOUND);
 		}
 	}
 	

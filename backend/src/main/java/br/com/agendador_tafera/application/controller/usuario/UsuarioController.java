@@ -1,4 +1,4 @@
-package br.com.agendador_tafera.application.controller;
+package br.com.agendador_tafera.application.controller.usuario;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.agendador_tafera.application.model.Usuario;
-import br.com.agendador_tafera.application.service.UsuarioService;
+import br.com.agendador_tafera.application.service.usuario.UsuarioService;
 
 @RestController
-@RequestMapping(value = "/api/v1/usuarios")
+@RequestMapping(value = "/api/v1/usuario")
 public class UsuarioController {
 	
 	@Autowired
@@ -26,7 +26,7 @@ public class UsuarioController {
 	
 	/* EndPoint Listar todos os Usuarios*/
 	@GetMapping
-	@PreAuthorize("hasRole('ROLE_G')")
+	@PreAuthorize("hasRole('ROLE_ADM')")
 	public ResponseEntity<?> listAll(){
 		return ResponseEntity.ok(service.listAllUsers());
 	}

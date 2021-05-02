@@ -1,28 +1,30 @@
 package br.com.agendador_tafera.application.model;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
-@Entity(name = "usuario")
-@Getter @Setter
-@EqualsAndHashCode
+@Entity(name = "TB_USUARIO")
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@Data
 public class Usuario implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,20 +43,18 @@ public class Usuario implements Serializable {
 	@Column(name = "SENHA", length = 65, nullable = false)
 	private String senha;
 	
-	@Column(name = "DATA_NASCIMENTO", length = 15,nullable = false)
-	private String dtNascimento;
-	
 	@Column(name = "CELULAR", length = 10, nullable = false)
 	private String celular;
-	
-	@Column(name = "TELEFONE", length = 10)
-	private String telefone;
-	
-	@Column(name = "ENDERECO", length = 255, nullable = false)
-	private String endereco;
-	
-	@Column(name = "TIPO_USUARIO", length = 1, nullable = false)
+		
+	@Column(name = "TIPO_USUARIO", length = 4, nullable = false)
 	private String tipoUsuario;
+	
+
+	@OneToMany(cascade = CascadeType.REMOVE,fetch = FetchType.EAGER)
+	@JoinTable(name = "TB_PERFIL_USUARIO",
+	   joinColumns =  @JoinColumn(name = "ID_USUARIO", foreignKey = @ForeignKey(name = "FK_USER_PERFIL")),//, referencedColumnName = "PK_USUARIO"),
+	   inverseJoinColumns = @JoinColumn(name = "ID_PERFIL", foreignKey = @ForeignKey(name = "FK_PERFIL_USER")))//, referencedColumnName = "PK_PERFIL_USUARIO"))
+	private List<PerfilUsuario> perfis; 
 	
 	public String encriptPassword(String senha) {
 		senha = new BCryptPasswordEncoder().encode(senha);

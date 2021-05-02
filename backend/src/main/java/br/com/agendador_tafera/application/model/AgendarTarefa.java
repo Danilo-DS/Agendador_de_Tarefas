@@ -3,29 +3,31 @@ package br.com.agendador_tafera.application.model;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
+import br.com.agendador_tafera.application.enums.StatusTarefa;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
-@Entity(name = "agendartarefa")
-@Getter @Setter
-@EqualsAndHashCode
+@Entity(name = "TB_TAREFAS")
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@Data
 public class AgendarTarefa implements Serializable{
 	
 	private static final long serialVersionUID = 1l;
@@ -41,9 +43,18 @@ public class AgendarTarefa implements Serializable{
 	@Column(name = "DESCRICAO", length = 255, nullable = false)
 	private String descricao;
 	
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "TB_TAREFAS_USUARIOS",
+		joinColumns = @JoinColumn(name = "USUARIO_ID", foreignKey = @ForeignKey(name = "FK_USER_TAREFA")),
+		inverseJoinColumns = @JoinColumn(name = "ID_PERFIL", foreignKey = @ForeignKey(name = "FK_TAREFA")))
+	private List<Usuario> usuario;
+	
 	@ManyToOne
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_Usuario"))
-	private Usuario usuario;
+	@JoinColumn(name = "EMPRESA_ID", foreignKey = @ForeignKey(name = "FK_TAR_EMPRESA"))
+	private Empresa empresa;
+	
+	@Column(name = "EMAIL_CONVIDADOS", columnDefinition = "VARCHAR(5000)")
+	private String convidados;
 	
 	@Column(name = "PRIORIDADE", length = 5, nullable = false)
 	private String prioridade;
@@ -58,7 +69,8 @@ public class AgendarTarefa implements Serializable{
 	private String dtCancelamentoTarefa;
 	
 	@Column(name = "STATUS_TAREFA", length = 11, nullable = false)
-	private String statusTarefa;
+	@Enumerated(EnumType.STRING)
+	private StatusTarefa statusTarefa;
 	
 	public String convertData() {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

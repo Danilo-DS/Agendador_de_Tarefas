@@ -11,19 +11,19 @@ import br.com.agendador_tafera.application.exception.agendarTarefa.AgendarTarefa
 import br.com.agendador_tafera.application.exception.usuario.UsuarioException;
 
 @ControllerAdvice
-public class Exceptions extends ResponseEntityExceptionHandler{
+public class HandlerException extends ResponseEntityExceptionHandler{
 	
 	/* Captura e lança exceções personalizadas de Usuario*/
 	@ExceptionHandler(UsuarioException.class)
 	public ResponseEntity<Object> ExceptionUsuario(UsuarioException userExp, WebRequest request ){
+
 		return super.handleExceptionInternal(userExp, userExp.getMessage(), new HttpHeaders(), userExp.getStatus(), request);
-		
 	}
 	
 	/* Captura e lança exceções personalizadas de Tarefas*/ 
 	@ExceptionHandler(AgendarTarefaException.class)
 	public ResponseEntity<Object> ExceptionTarefa(AgendarTarefaException atExp, WebRequest request ){
-		return super.handleExceptionInternal(atExp, atExp.getMessage(), new HttpHeaders(), atExp.getStatus(), request);
 		
+		return super.handleExceptionInternal(atExp, atExp.getMessage(), new HttpHeaders(), atExp.getStatus(), request);
 	}
 }

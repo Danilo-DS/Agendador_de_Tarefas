@@ -7,13 +7,14 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.CollectionUtils;
 
-import lombok.AllArgsConstructor;
+import br.com.agendador_tafera.application.enums.PerfilUS;
+import br.com.agendador_tafera.application.model.PerfilUsuario;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class UserLogin implements UserDetails {
 	
@@ -22,20 +23,34 @@ public class UserLogin implements UserDetails {
 	private Long id;
 	private String email;
 	private String senha;
-	private String tipo;
+	private String tipoUsuario;
+	private List<PerfilUsuario> perfis;
 	
 	private Collection<? extends GrantedAuthority> authorities;
+
+	public UserLogin (Long id, String email, String senha, String tipoUsuario, Collection<? extends GrantedAuthority> authorities) {
+		this.id = id;
+		this.email = email;
+		this.senha = senha;
+		this.tipoUsuario = tipoUsuario;
+		this.authorities = authorities;
+	}
 	
 	public static UserLogin builder(UserLogin user) {
 		
-		List<GrantedAuthority> role = new ArrayList<>();
-		role.add(new SimpleGrantedAuthority(("ROLE_"+user.getTipo()).trim()));
+		List<GrantedAuthority> role = new ArrayList<>(); 
+		
+		if(!CollectionUtils.isEmpty(user.getPerfis())) {
+			user.getPerfis().forEach(p -> {
+				role.add(new SimpleGrantedAuthority("ROLE_"+ user.getPermissao(p.getId())));
+			});
+		}
 		
 		return new UserLogin(
 					user.getId(),
 					user.getUsername(),
 					user.getPassword(),
-					user.getTipo(),
+					user.getTipoUsuario(),
 					role
 			   );
 	}
@@ -69,5 +84,29 @@ public class UserLogin implements UserDetails {
 		return true;
 	}
 	
-	
+	private String getPermissao(Long idPerfil) {
+		
+		if(PerfilUS.ADMINISTRADOR.getIdPerfil().longValue() == idPerfil) {
+			return PerfilUS.ADMINISTRADOR.getPerfil();
+		}
+		
+		if(PerfilUS.EMPRESA.getIdPerfil().longValue() == idPerfil) {
+			return PerfilUS.EMPRESA.getPerfil();
+		}
+		
+		if(PerfilUS.FUNCIONARIO.getIdPerfil().longValue() == idPerfil) {
+			return PerfilUS.FUNCIONARIO.getPerfil();
+		}
+		
+		if(PerfilUS.GESTOR.getIdPerfil().longValue() == idPerfil) {
+			return PerfilUS.GESTOR.getPerfil();
+		}
+		
+		if(PerfilUS.MASTER.getIdPerfil().longValue() == idPerfil) {
+			return PerfilUS.MASTER.getPerfil();
+		}
+		
+		return PerfilUS.USUARIO_COMUM.getPerfil();
+		
+	}
 }
