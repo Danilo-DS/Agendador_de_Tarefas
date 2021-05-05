@@ -14,7 +14,7 @@ import br.com.agendador_tafera.application.enums.StatusTarefa;
 import br.com.agendador_tafera.application.exception.agendarTarefa.AgendarTarefaException;
 import br.com.agendador_tafera.application.model.AgendarTarefa;
 import br.com.agendador_tafera.application.model.Usuario;
-import br.com.agendador_tafera.application.modelDTO.TarefaDTO;
+import br.com.agendador_tafera.application.modelDTO.TarefaResponseDTO;
 import br.com.agendador_tafera.application.repository.AgendaTarefaRepository;
 import br.com.agendador_tafera.application.service.email.SendEmailService;
 import br.com.agendador_tafera.application.service.usuario.UsuarioService;
@@ -37,7 +37,7 @@ public class AgendarTarefaService {
 	private AgendarTarefa agendar;
 	
 	@Transactional(readOnly = true)
-	public List<TarefaDTO> listAllTask(){
+	public List<TarefaResponseDTO> listAllTask(){
 		return toDTO(agendaRepository.findAll());
 	}
 	
@@ -47,18 +47,14 @@ public class AgendarTarefaService {
 	}
 	
 	/* Lista a tarefa de cada usuario */
-	public List<TarefaDTO> findTaskToUsuario(Long id) {
+	public List<TarefaResponseDTO> findTaskToUsuario(Long id) {
 		agendaRepository.findByUsuario(userService.findUserId(id));
 		return toDTO(agendaRepository.findByUsuario(userService.findUserId(id)));
 	}
 	
-	/*Salva uma tarefa e utiliza o serviço de email para enviar
-	 * um email ao usuario designado tarefa
-	 * @Param Recebe um obj AgendarTarefa
-	 */
 	@Transactional
 	public void saveTask(AgendarTarefa at) {
-		if(userService.verifyUser(at.getUsuario().get(0).getId())){
+		if(userService.isExisteUsuarioPorId(at.getUsuario().get(0).getId())){
 			user = userService.findUserId(at.getUsuario().get(0).getId());
 			at.setDtCriacaoTarefa(at.convertData());
 			at.setUsuario(Arrays.asList(user));
@@ -82,9 +78,6 @@ public class AgendarTarefaService {
 		}
 	}
 	
-	/* Atualiza Tarefa já cadastrada na base
-	 * @param recebe o id da tarefa
-	 * @param recebe um obj tarefa*/
 	@Transactional
 	public void updateTask(Long id, AgendarTarefa at) {
 		
@@ -112,7 +105,7 @@ public class AgendarTarefaService {
 			datasTarefas = "Data Cancelamento: " + agendar.getDtCancelamentoTarefa();
 			
 		}
-		else if(verifyTask(id) && userService.verifyUser(at.getUsuario().get(0).getId())) { 
+		else if(verifyTask(id) && userService.isExisteUsuarioPorId(at.getUsuario().get(0).getId())) { 
 		 																			
 			
 			user = userService.findUserId(at.getUsuario().get(0).getId());
@@ -127,8 +120,6 @@ public class AgendarTarefaService {
 		}																							  
 		
 		
-		/* Se uma das condições acima for aceita e não lançar exceção
-		 * é chamado o serviço de email */
 		String respEmail = emailService.sendMail(
 				agendar.getTitulo(),
 				"Descrição da Tarefa: " + agendar.getDescricao() + "\n"
@@ -155,9 +146,6 @@ public class AgendarTarefaService {
 		
 	}
 	
-	/* Verifica se a tarefa existe na base
-	 * @param id da tarefa
-	 * @return true para OK e false para FAIL*/
 	@Transactional(readOnly = true)
 	private boolean verifyTask(Long id) {
 		if(agendaRepository.existsById(id)) {
@@ -168,9 +156,8 @@ public class AgendarTarefaService {
 		}
 	}
 	
-	/* Converte uma lista Objs do tipo AgendarTarefa em uma list de TarefaDTO */ 
-	private List<TarefaDTO> toDTO(List<AgendarTarefa> tarefa) {
-		return tarefa.stream().map(t -> ModelConvert.mapper().map(t, TarefaDTO.class)).collect(Collectors.toList());
+	private List<TarefaResponseDTO> toDTO(List<AgendarTarefa> tarefa) {
+		return tarefa.stream().map(t -> ModelConvert.mapper().map(t, TarefaResponseDTO.class)).collect(Collectors.toList());
 	}
 	
 }

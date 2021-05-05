@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.agendador_tafera.application.model.Usuario;
+import br.com.agendador_tafera.application.modelDTO.UsuarioRequestDTO;
+import br.com.agendador_tafera.application.modelDTO.UsuarioResponseDTO;
 import br.com.agendador_tafera.application.service.usuario.UsuarioService;
 
 @RestController
@@ -42,16 +44,16 @@ public class UsuarioController {
 	@PostMapping
 	@PreAuthorize("hasRole('ROLE_G')")
 	@ResponseStatus(value = HttpStatus.CREATED)
-	public void save(@RequestBody Usuario user){
-		service.saveUser(user);
+	@ResponseBody
+	public UsuarioResponseDTO save(@RequestBody UsuarioRequestDTO usuarioRequest){
+		return service.saveUser(usuarioRequest);
 	}
 	
 	/* EndPoint Atualizar dados do Usuario*/
 	@PutMapping(value = "/{id}")
 	@PreAuthorize("hasRole('ROLE_G') or hasRole('ROLE_U')")
-	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Usuario user){
-		service.updateUser(user, id);
-		return ResponseEntity.ok().build();
+	public ResponseEntity<?> update( @RequestBody UsuarioRequestDTO usuarioRequest){
+		return ResponseEntity.ok(service.updateUser(usuarioRequest));
 	}
 	
 	/* EndPoint Exclusão do usuario*/

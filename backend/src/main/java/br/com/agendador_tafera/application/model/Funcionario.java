@@ -26,6 +26,7 @@ public class Funcionario implements Serializable {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@Column(name = "ID")
 	private Long id;
 	
 	@Column(name = "NM_USUARIO", length = 60,nullable = false)

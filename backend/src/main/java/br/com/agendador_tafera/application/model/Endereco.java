@@ -8,6 +8,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.springframework.util.StringUtils;
+
+import br.com.agendador_tafera.application.modelDTO.EnderecoDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -42,4 +45,14 @@ public class Endereco implements Serializable {
 	
 	@Column(name = "CIDADE_ESTADO", length = 30, nullable = false)
 	private String cidadeEstado;
+	
+	public static Endereco atualizarEndereco(Endereco endereco, EnderecoDTO enderecoDTO) {
+			endereco.setLogradouro(StringUtils.hasText(enderecoDTO.getLogradouro()) ? enderecoDTO.getLogradouro() : endereco.getLogradouro());
+			endereco.setBairro(StringUtils.hasText(enderecoDTO.getBairro()) ? enderecoDTO.getBairro() : endereco.getBairro());
+			endereco.setNumero(StringUtils.hasText(enderecoDTO.getNumero()) ? enderecoDTO.getNumero() : endereco.getNumero());
+			endereco.setComplemento(StringUtils.hasText(enderecoDTO.getComplemento()) ? enderecoDTO.getComplemento() : endereco.getComplemento());
+			endereco.setCep(StringUtils.hasText(enderecoDTO.getCep()) ? enderecoDTO.getCep() : endereco.getCep());
+			endereco.setCidadeEstado(StringUtils.hasText(enderecoDTO.getCidadeEstado()) ? enderecoDTO.getCidadeEstado() : endereco.getCidadeEstado());
+		return endereco;
+	}
 }

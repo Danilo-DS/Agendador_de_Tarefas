@@ -54,7 +54,10 @@ public class AgendarTarefa implements Serializable{
 	private Empresa empresa;
 	
 	@Column(name = "EMAIL_CONVIDADOS", columnDefinition = "VARCHAR(5000)")
-	private String convidados;
+	private String convidadosEmail;
+	
+	@Column(name = "TELEFONES_CONVIDADOS", columnDefinition = "VARCHAR(5000)")
+	private String convidadosTelefone;
 	
 	@Column(name = "PRIORIDADE", length = 5, nullable = false)
 	private String prioridade;

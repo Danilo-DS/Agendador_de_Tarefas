@@ -1,23 +1,22 @@
 package br.com.agendador_tafera.application.modelDTO;
 
-import java.io.Serializable;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TarefaDTO implements Serializable{
+@Data
+public class TarefaRequestDTO {
 	
-	private static final long serialVersionUID = 1L;
-	
-	private Long id;
 	private String titulo;
 	private String descricao;
-	private UsuarioDTO usuario;
+	private List<UsuarioTarefaDTO> usuario;
+	private EmpresaResponseDTO empresa; 
 	private String prioridade;
 	private String statusTarefa;
+	private List<String> convidadosEmail;
+	private List<String> convidadosTelefone;
 }

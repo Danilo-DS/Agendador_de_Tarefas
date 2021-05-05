@@ -2,6 +2,7 @@ package br.com.agendador_tafera.application.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -43,4 +44,8 @@ public class Empresa implements Serializable {
 	@OneToOne
 	@JoinColumn(name = "ENDERECO_ID", foreignKey = @ForeignKey(name = "FK_EMP_ENDERECO"))
 	private Endereco endereco;
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "USUARIO_ID", foreignKey = @ForeignKey(name = "FK_EMP_USUARIO"))
+	private Usuario usuario;
 }
