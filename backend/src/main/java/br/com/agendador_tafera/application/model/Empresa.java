@@ -41,7 +41,7 @@ public class Empresa implements Serializable {
 	@Column(name = "INSC_ESTADUAL")
 	private String inscricaoEstadual;
 	
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "ENDERECO_ID", foreignKey = @ForeignKey(name = "FK_EMP_ENDERECO"))
 	private Endereco endereco;
 	

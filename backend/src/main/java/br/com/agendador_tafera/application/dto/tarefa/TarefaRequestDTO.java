@@ -1,7 +1,9 @@
-package br.com.agendador_tafera.application.modelDTO;
+package br.com.agendador_tafera.application.dto.tarefa;
 
 import java.util.List;
 
+import br.com.agendador_tafera.application.dto.empresa.EmpresaResponseDTO;
+import br.com.agendador_tafera.application.dto.usuario.UsuarioTarefaDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

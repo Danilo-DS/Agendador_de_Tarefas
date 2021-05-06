@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.agendador_tafera.application.config.ModelConvert;
+import br.com.agendador_tafera.application.dto.tarefa.TarefaResponseDTO;
 import br.com.agendador_tafera.application.enums.StatusTarefa;
 import br.com.agendador_tafera.application.exception.agendarTarefa.AgendarTarefaException;
 import br.com.agendador_tafera.application.model.AgendarTarefa;
 import br.com.agendador_tafera.application.model.Usuario;
-import br.com.agendador_tafera.application.modelDTO.TarefaResponseDTO;
 import br.com.agendador_tafera.application.repository.AgendaTarefaRepository;
 import br.com.agendador_tafera.application.service.email.SendEmailService;
 import br.com.agendador_tafera.application.service.usuario.UsuarioService;

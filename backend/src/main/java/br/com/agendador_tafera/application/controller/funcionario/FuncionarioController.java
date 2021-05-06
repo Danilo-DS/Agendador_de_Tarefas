@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.agendador_tafera.application.model.Funcionario;
+import br.com.agendador_tafera.application.dto.funcionario.FuncionarioRequestDTO;
 import br.com.agendador_tafera.application.service.funcionario.FuncionarioService;
 
 @RestController
@@ -35,15 +35,14 @@ public class FuncionarioController {
 	
 	@PostMapping
 	@ResponseStatus(value = HttpStatus.CREATED)
-	public void save(@RequestBody Funcionario funcionario) {
-		funcionarioService.saveFuncionario(funcionario);;
+	public void save(@RequestBody FuncionarioRequestDTO funcionarioRequest) {
+		funcionarioService.saveFuncionario(funcionarioRequest);
 	}	
 	
-	@PutMapping(value = "/{id}")
+	@PutMapping
 	@ResponseStatus(value = HttpStatus.OK)
-	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Funcionario funcionario) {
-		funcionarioService.updateFuncionario();
-		return ResponseEntity.ok("");
+	public ResponseEntity<?> update(@RequestBody FuncionarioRequestDTO funcionarioRequest) {
+		return ResponseEntity.ok(funcionarioService.updateFuncionario(funcionarioRequest));
 	}
 	
 	@DeleteMapping(value = "/{id}")

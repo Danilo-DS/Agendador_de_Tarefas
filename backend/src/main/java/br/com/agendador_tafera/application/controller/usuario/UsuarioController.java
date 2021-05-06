@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.agendador_tafera.application.modelDTO.UsuarioRequestDTO;
-import br.com.agendador_tafera.application.modelDTO.UsuarioResponseDTO;
+import br.com.agendador_tafera.application.dto.usuario.UsuarioRequestDTO;
+import br.com.agendador_tafera.application.dto.usuario.UsuarioResponseDTO;
 import br.com.agendador_tafera.application.service.usuario.UsuarioService;
 
 @RestController

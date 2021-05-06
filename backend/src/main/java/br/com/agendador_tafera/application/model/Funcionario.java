@@ -1,6 +1,9 @@
 package br.com.agendador_tafera.application.model;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -38,11 +41,11 @@ public class Funcionario implements Serializable {
 	@Column(name = "NU_PIS_PASEP", length = 11)
 	private String pisPasep;
 	
-	@Column(name = "DATA_CADASTRO", length = 11)
-	private String dataCadastro;
+	@Column(name = "DATA_CADASTRO")
+	private Date dataCadastro;
 	
-	@Column(name = "DATA_NASCIMENTO", length = 15,nullable = false)
-	private String dtNascimento;
+	@Column(name = "DATA_NASCIMENTO",nullable = false)
+	private Date dataNascimento;
 	
 	@Column(name = "CELULAR", length = 10, nullable = false)
 	private String celular;
@@ -50,7 +53,7 @@ public class Funcionario implements Serializable {
 	@Column(name = "TELEFONE", length = 10)
 	private String telefone;
 	
-	@OneToOne(cascade = CascadeType.REMOVE)
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "ENDERECO_ID", foreignKey = @ForeignKey(name = "FK_FUNC_ENDERECO"), nullable =  false)
 	private Endereco endereco;
 	
@@ -58,7 +61,17 @@ public class Funcionario implements Serializable {
 	@JoinColumn(name = "EMPRESA_ID", foreignKey = @ForeignKey(name = "FK_FUNC_EMPRESA"))
 	private Empresa empresa;
 	
-	@OneToOne(cascade = CascadeType.REMOVE)
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "ID_USUARIO", foreignKey = @ForeignKey(name = "FK_FUNC_USUARIO"))
 	private Usuario usuario;
+	
+	public Date converteData(String data) {
+		try {
+			return new SimpleDateFormat("dd-MM-yyyy").parse(data);
+		}
+		catch (ParseException e) {
+			throw new RuntimeException("");
+		}
+	}
+	
 }

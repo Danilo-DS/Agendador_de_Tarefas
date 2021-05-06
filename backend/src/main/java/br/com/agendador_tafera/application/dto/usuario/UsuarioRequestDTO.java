@@ -1,4 +1,4 @@
-package br.com.agendador_tafera.application.modelDTO;
+package br.com.agendador_tafera.application.dto.usuario;
 
 import java.util.List;
 

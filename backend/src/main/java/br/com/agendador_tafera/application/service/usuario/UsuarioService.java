@@ -11,10 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import br.com.agendador_tafera.application.config.ModelConvert;
+import br.com.agendador_tafera.application.dto.usuario.UsuarioRequestDTO;
+import br.com.agendador_tafera.application.dto.usuario.UsuarioResponseDTO;
 import br.com.agendador_tafera.application.exception.usuario.UsuarioException;
 import br.com.agendador_tafera.application.model.Usuario;
-import br.com.agendador_tafera.application.modelDTO.UsuarioRequestDTO;
-import br.com.agendador_tafera.application.modelDTO.UsuarioResponseDTO;
 import br.com.agendador_tafera.application.repository.UsuarioRepository;
 import br.com.agendador_tafera.application.utils.Utilitarios;
 
@@ -48,15 +48,14 @@ public class UsuarioService {
 		
 		String email = usuarioRequest.getEmail();
 		
-		if(isExisteUsuarioPorEmail(email)) {
-			Usuario usuario = atualizaDadosUsuario(userRepository.findByEmail(email).get(), usuarioRequest);
-			userRepository.save(usuario);
-			
-			return usuarioToDto(usuario);
-		}
-		else {
+		if(!isExisteUsuarioPorEmail(email)) {
 			throw new UsuarioException(Utilitarios.ERROR_ATUALIZAR_USUARIO, HttpStatus.NOT_FOUND);
 		}
+		
+		Usuario usuario = atualizaDados(userRepository.findByEmail(email).get(), usuarioRequest);
+		userRepository.save(usuario);
+		
+		return usuarioToDto(usuario);
 	}
 	
 	@Transactional
@@ -98,7 +97,7 @@ public class UsuarioService {
 		return usuarioResponse;
 	}
 	
-	private Usuario atualizaDadosUsuario(Usuario usuario, UsuarioRequestDTO usuarioRequest) {
+	private Usuario atualizaDados(Usuario usuario, UsuarioRequestDTO usuarioRequest) {
 		usuario.setNome(StringUtils.hasText(usuarioRequest.getNome()) ? usuarioRequest.getNome() : usuario.getNome());
 		usuario.setEmail(StringUtils.hasText(usuarioRequest.getEmail()) ? usuarioRequest.getEmail() : usuario.getEmail());
 		usuario.setSenha(usuario.encriptPassword(StringUtils.hasText(usuarioRequest.getSenha()) ? usuarioRequest.getSenha() : usuario.getSenha()));

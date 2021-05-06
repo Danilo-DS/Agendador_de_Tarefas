@@ -8,12 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import br.com.agendador_tafera.application.config.ModelConvert;
+import br.com.agendador_tafera.application.dto.empresa.EmpresaRequestDTO;
+import br.com.agendador_tafera.application.dto.empresa.EmpresaResponseDTO;
 import br.com.agendador_tafera.application.model.Empresa;
 import br.com.agendador_tafera.application.model.Endereco;
-import br.com.agendador_tafera.application.modelDTO.EmpresaRequestDTO;
-import br.com.agendador_tafera.application.modelDTO.EmpresaResponseDTO;
 import br.com.agendador_tafera.application.repository.EmpresaRepository;
-import br.com.agendador_tafera.application.repository.EnderecoRepository;
+import br.com.agendador_tafera.application.service.endereco.EnderecoService;
 import br.com.agendador_tafera.application.service.usuario.UsuarioService;
 
 @Service
@@ -23,7 +23,7 @@ public class EmpresaService {
 	private EmpresaRepository empresaRepository;
 	
 	@Autowired
-	private EnderecoRepository enderecoRespository; 
+	private EnderecoService enderecoService;
 	
 	private UsuarioService usuarioService;
 	
@@ -42,16 +42,15 @@ public class EmpresaService {
 	
 	public EmpresaResponseDTO updateEmpresa(EmpresaRequestDTO empresaRequest) {
 		String cnpj = empresaRequest.getCnpj();
-		if(isExisteEmpresaByCnpj(cnpj)) {
-			
-			Empresa empresa = atualizarDadosEmpresa(empresaRepository.findByCnpj(cnpj).get(), empresaRequest);
-			empresaRepository.save(empresa);
-			
-			return empresaToDto(empresa);
-		}
-		else {
+		if(!isExisteEmpresaByCnpj(cnpj)) {
 			throw new RuntimeException("");
+			
 		}
+		
+		Empresa empresa = atualizarDados(findEmpresaCnpj(cnpj), empresaRequest);
+		empresaRepository.save(empresa);
+		
+		return empresaToDto(empresa);
 	}
 	
 	public void deleteEmpresa(Long id) {
@@ -60,6 +59,10 @@ public class EmpresaService {
 		}
 		
 		empresaRepository.deleteById(id);
+	}
+	
+	public Empresa findEmpresaCnpj(String cnpj) {
+		return empresaRepository.findByCnpj(cnpj).orElseThrow(() -> new RuntimeException(""));
 	}
 	
 	private Boolean isExisteEmpresa(Long id) {
@@ -82,13 +85,13 @@ public class EmpresaService {
 		return empresa.stream().map(e -> ModelConvert.mapper().map(e, EmpresaResponseDTO.class)).collect(Collectors.toList());
 	}
 	
-	private Empresa atualizarDadosEmpresa(Empresa empresa, EmpresaRequestDTO empresaRequest) {
+	private Empresa atualizarDados(Empresa empresa, EmpresaRequestDTO empresaRequest) {
 		
 		empresa.setNomeFantasia(StringUtils.hasText(empresaRequest.getNomeFantasia()) ? empresaRequest.getNomeFantasia() : empresa.getNomeFantasia());
 		empresa.setRazaoSocial(StringUtils.hasText(empresaRequest.getRazaoSocial()) ? empresaRequest.getRazaoSocial() : empresa.getRazaoSocial());
 		empresa.setCnpj(StringUtils.hasText(empresaRequest.getCnpj()) ? empresaRequest.getCnpj() : empresa.getCnpj());
 		empresa.setInscricaoEstadual(StringUtils.hasText(empresaRequest.getInscricaoEstadual()) ? empresaRequest.getInscricaoEstadual() : empresa.getInscricaoEstadual());
-		empresa.setEndereco(Endereco.atualizarEndereco(enderecoRespository.getOne(empresa.getEndereco().getId()), empresaRequest.getEndereco()));
+		empresa.setEndereco(Endereco.atualizarEndereco(enderecoService.findEnderecoId(empresa.getEndereco().getId()), empresaRequest.getEndereco()));
 		empresa.setUsuario(usuarioService.findUserId(usuarioService.updateUser(empresaRequest.getUsuario()).getId()));		
 		return empresa;
 	}
