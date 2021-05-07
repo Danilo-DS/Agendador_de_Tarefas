@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 import br.com.agendador_tafera.application.config.ModelConvert;
 import br.com.agendador_tafera.application.dto.usuario.UsuarioRequestDTO;
 import br.com.agendador_tafera.application.dto.usuario.UsuarioResponseDTO;
+import br.com.agendador_tafera.application.dto.usuario.UsuarioTarefaDTO;
 import br.com.agendador_tafera.application.exception.usuario.UsuarioException;
 import br.com.agendador_tafera.application.model.Usuario;
 import br.com.agendador_tafera.application.repository.UsuarioRepository;
@@ -25,18 +26,22 @@ public class UsuarioService {
 	private UsuarioRepository userRepository;
 	
 	@Transactional(readOnly = true)
-	public List<UsuarioResponseDTO> listAllUsers(){
+	public List<UsuarioResponseDTO> listarUsuarios(){
 		return toListUsuarioDto(userRepository.findAll());
 	}
 	
 	@Transactional(readOnly = true)
-	public Usuario findUserId(Long id) {
-		Optional<Usuario> user = userRepository.findById(id);
-		return user.orElseThrow(() -> new UsuarioException(Utilitarios.ERROR_BUSCAR_USUARIO, HttpStatus.NOT_FOUND));
+	public Usuario buscarUsuarioPorEmail(String email){
+		return userRepository.findByEmail(email).orElseThrow(() -> new UsuarioException(Utilitarios.ERROR_BUSCAR_USUARIO, HttpStatus.NOT_FOUND));
+	}
+	
+	@Transactional(readOnly = true)
+	public Usuario buscarUsuarioPorId(Long id) {
+		return userRepository.findById(id).orElseThrow(() -> new UsuarioException(Utilitarios.ERROR_BUSCAR_USUARIO, HttpStatus.NOT_FOUND));
 	}
 	
 	@Transactional
-	public UsuarioResponseDTO saveUser(UsuarioRequestDTO  usuarioRequest) {
+	public UsuarioResponseDTO salvarUsuario(UsuarioRequestDTO  usuarioRequest) {
 		Usuario usuario = dtoToUsuario(usuarioRequest);
 		usuario.setSenha(usuario.encriptPassword(usuario.getSenha()));
 		userRepository.save(usuario);
@@ -44,7 +49,7 @@ public class UsuarioService {
 	}
 	
 	@Transactional
-	public UsuarioResponseDTO updateUser(UsuarioRequestDTO usuarioRequest) {
+	public UsuarioResponseDTO atualizarUsuario(UsuarioRequestDTO usuarioRequest) {
 		
 		String email = usuarioRequest.getEmail();
 		
@@ -59,7 +64,7 @@ public class UsuarioService {
 	}
 	
 	@Transactional
-	public void deleteUser(Long id) {
+	public void deletarUsuario(Long id) {
 		if(isExisteUsuarioPorId(id)) {
 			userRepository.deleteById(id);
 		}
@@ -69,15 +74,32 @@ public class UsuarioService {
 	}
 	
 	@Transactional(readOnly = true)
-	public boolean isExisteUsuarioPorId(Long id) {
+	public Boolean isExisteUsuarioPorId(Long id) {
 		return userRepository.existsById(id);
 		
 	}
 	
 	@Transactional(readOnly = true)
-	public boolean isExisteUsuarioPorEmail(String email) {
+	public Boolean isExisteUsuarioPorEmail(String email) {
 		return userRepository.existsByEmail(email);
+	}
+	
+	public Boolean isExisteUsuarios(List<UsuarioTarefaDTO> usuarioTarefa) {
+		Boolean todosExistem = true;
+		for (UsuarioTarefaDTO ut : usuarioTarefa) {
+			if(!validaUsuarioTarefa(ut)) {
+				return !todosExistem;
+			}
+		}
+		return todosExistem;
+	}
+	
+	private Boolean validaUsuarioTarefa(UsuarioTarefaDTO usuarioTarefa) {
+		if(StringUtils.hasText(usuarioTarefa.getEmail())) {
+			return isExisteUsuarioPorEmail(usuarioTarefa.getEmail());
+		}
 		
+		return isExisteUsuarioPorId(usuarioTarefa.getId());	
 	}
 	
 	private Usuario dtoToUsuario(UsuarioRequestDTO usuarioRequest) {

@@ -1,6 +1,7 @@
 package br.com.agendador_tafera.application.service.funcionario;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,9 +32,12 @@ public class FuncionarioService {
 	@Autowired
 	private EnderecoService enderecoService;
 	
-	public List<Funcionario> listAllFuncionario() {
-		
+	public List<Funcionario> listAllFuncionario() {		
 		return funcionarioRepository.findAll();
+	}
+	
+	public List<FuncionarioResponseDTO> listAllFuncionario(String cnpjEmpresa) {		
+		return toListFuncionarioDto(funcionarioRepository.findByEmpresa(empresaService.findEmpresaCnpj(cnpjEmpresa)));
 	}
 	
 	public Funcionario findFuncionarioId(Long id) {
@@ -86,6 +90,10 @@ public class FuncionarioService {
 		return ModelConvert.mapper().map(funcionario, FuncionarioResponseDTO.class);
 	}
 	
+	private List<FuncionarioResponseDTO> toListFuncionarioDto(List<Funcionario> funcionario) {
+		return funcionario.stream().map(func->ModelConvert.mapper().map(func, FuncionarioResponseDTO.class)).collect(Collectors.toList());
+	}
+	
 	private Funcionario atualizarDados(Funcionario funcionario, FuncionarioRequestDTO funcionarioRequestDTO) {
 		
 		funcionario.setNome(StringUtils.hasText(funcionarioRequestDTO.getNome()) ? funcionarioRequestDTO.getNome() : funcionario.getNome());
@@ -96,7 +104,7 @@ public class FuncionarioService {
 		funcionario.setTelefone(StringUtils.hasText(funcionarioRequestDTO.getNome()) ? funcionarioRequestDTO.getNome() : funcionario.getNome());
 		funcionario.setEmpresa(empresaService.findEmpresaCnpj(funcionarioRequestDTO.getEmpresa().getCnpj()));
 		funcionario.setEndereco(Endereco.atualizarEndereco(enderecoService.findEnderecoId(funcionario.getEmpresa().getId()), funcionarioRequestDTO.getEndereco()));
-		funcionario.setUsuario(usuarioService.findUserId(funcionario.getUsuario().getId()));
+		funcionario.setUsuario(usuarioService.buscarUsuarioPorId(funcionario.getUsuario().getId()));
 		return funcionario;
 	}
 	

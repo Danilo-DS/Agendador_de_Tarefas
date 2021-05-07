@@ -28,7 +28,7 @@ public class EmpresaService {
 	private UsuarioService usuarioService;
 	
 	public List<EmpresaResponseDTO> listAllEmpresa() {
-		return toListEmpresaDTO(empresaRepository.findAll());
+		return toListEmpresaDto(empresaRepository.findAll());
 	}
 	
 	public Empresa findEmpresaId(Long id) {
@@ -81,7 +81,7 @@ public class EmpresaService {
 		return ModelConvert.mapper().map(empresa, EmpresaResponseDTO.class);
 	}
 	
-	private List<EmpresaResponseDTO> toListEmpresaDTO(List<Empresa> empresa) {
+	private List<EmpresaResponseDTO> toListEmpresaDto(List<Empresa> empresa) {
 		return empresa.stream().map(e -> ModelConvert.mapper().map(e, EmpresaResponseDTO.class)).collect(Collectors.toList());
 	}
 	
@@ -92,7 +92,7 @@ public class EmpresaService {
 		empresa.setCnpj(StringUtils.hasText(empresaRequest.getCnpj()) ? empresaRequest.getCnpj() : empresa.getCnpj());
 		empresa.setInscricaoEstadual(StringUtils.hasText(empresaRequest.getInscricaoEstadual()) ? empresaRequest.getInscricaoEstadual() : empresa.getInscricaoEstadual());
 		empresa.setEndereco(Endereco.atualizarEndereco(enderecoService.findEnderecoId(empresa.getEndereco().getId()), empresaRequest.getEndereco()));
-		empresa.setUsuario(usuarioService.findUserId(usuarioService.updateUser(empresaRequest.getUsuario()).getId()));		
+		empresa.setUsuario(usuarioService.buscarUsuarioPorId(usuarioService.atualizarUsuario(empresaRequest.getUsuario()).getId()));		
 		return empresa;
 	}
 }

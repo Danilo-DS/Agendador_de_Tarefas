@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.agendador_tafera.application.model.AgendarTarefa;
+import br.com.agendador_tafera.application.dto.tarefa.TarefaRequestDTO;
 import br.com.agendador_tafera.application.service.tarefa.AgendarTarefaService;
 
 
@@ -31,36 +31,36 @@ public class AgendarTarefaController {
 	@GetMapping
 	@PreAuthorize("hasRole('ROLE_G')")
 	public ResponseEntity<?> listAll(){
-		return ResponseEntity.ok(service.listAllTask());
+		return ResponseEntity.ok(service.listarTarefas());
 	}
 	
 	/* EndPoint Buscar tarefa por id*/
 	@GetMapping(value = "/{id}")
 	@PreAuthorize("hasRole('ROLE_G') or hasRole('ROLE_U')")
 	public ResponseEntity<?> findTask(@PathVariable Long id){
-		return ResponseEntity.ok(service.findTaskId(id));
+		return ResponseEntity.ok(service.buscarTarefaPorId(id));
 	}
 	
 	/* EndPoint Lista Tarefas por usuario*/
 	@GetMapping(value = "/{id}/usuario")
 	@PreAuthorize("hasRole('ROLE_G') or hasRole('ROLE_U')")
 	public ResponseEntity<List<?>> findTaskUser(@PathVariable Long id){
-		return ResponseEntity.ok(service.findTaskToUsuario(id));
+		return ResponseEntity.ok(service.buscarTarefaPorUsuario(id));
 	}
 	
 	/* EndPoint Salvar Tarefa */
 	@PostMapping
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@PreAuthorize("hasRole('ROLE_G')")
-	public void save(@RequestBody AgendarTarefa at){
-		service.saveTask(at);
+	public void save(@RequestBody TarefaRequestDTO tarefaRequest){
+		service.salvarTarefa(tarefaRequest);
 	}
 	
 	/* EndPoint Atualizar Tarefa */
-	@PutMapping(value = "/{id}")
+	@PutMapping
 	@PreAuthorize("hasRole('ROLE_G')")
-	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody AgendarTarefa at){
-		service.updateTask(id, at);
+	public ResponseEntity<?> update(@RequestBody TarefaRequestDTO tarefaRequest){
+		service.atualizarTarefa(tarefaRequest);
 		return ResponseEntity.ok().build();
 	}
 	
@@ -68,7 +68,7 @@ public class AgendarTarefaController {
 	@DeleteMapping(value = "/{id}")
 	@PreAuthorize("hasRole('ROLE_G')")
 	public ResponseEntity<?> delete(@PathVariable Long id){
-		service.deleteTask(id);
+		service.deletatTarefa(id);
 		return ResponseEntity.noContent().build();
 	}
 	

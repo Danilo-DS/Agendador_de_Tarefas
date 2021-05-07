@@ -19,6 +19,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
+import br.com.agendador_tafera.application.dto.tarefa.TarefaRequestDTO;
 import br.com.agendador_tafera.application.enums.StatusTarefa;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -75,8 +76,12 @@ public class AgendarTarefa implements Serializable{
 	@Enumerated(EnumType.STRING)
 	private StatusTarefa statusTarefa;
 	
-	public String convertData() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		return sdf.format(new Date()); 
+	public static String convertData() {
+		return new SimpleDateFormat("yyyy-MM-dd").format(new Date()); 
+	}
+	
+	public static AgendarTarefa builder(Empresa empresa, List<Usuario> usuario, TarefaRequestDTO tarefaRequest) {
+		return new AgendarTarefa(null, tarefaRequest.getTitulo(), tarefaRequest.getDescricao(), usuario, empresa, tarefaRequest.getConvidadosEmail().toString(), 
+								tarefaRequest.getConvidadosEmail().toString(), tarefaRequest.getPrioridade(), convertData(), null, null, StatusTarefa.AGENDADA);
 	}
 }

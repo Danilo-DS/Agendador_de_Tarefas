@@ -6,10 +6,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import br.com.agendador_tafera.application.model.AgendarTarefa;
+import br.com.agendador_tafera.application.model.Empresa;
 import br.com.agendador_tafera.application.model.Usuario;
 
 @Repository
 public interface AgendaTarefaRepository extends JpaRepository<AgendarTarefa, Long>{
 	
 	List<AgendarTarefa> findByUsuario(Usuario usuario);
+	
+	List<AgendarTarefa> findByEmpresa(Empresa empresa);
+	
 }
