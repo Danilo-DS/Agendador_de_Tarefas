@@ -36,11 +36,18 @@ public class Utilitarios {
 	public static final String EMAIL_OK = "OK";
 	public static final String EMAIL_FAIL = "FAIL";
 	public static final String EMAIL_ENVIADO = "E-mail enviado com sucesso";
-	public static final String EMAIL_FALHOU = "Atividade Agendada !, mas ocorreu um erro ao enviar o e-mail";
+	public static final String EMAIL_FALHOU = "Atividade Agendada !";
 	public static final String EMAIL_FALHOU_ATUALIZACAO = "Ativdade Atualizada !, mas ocorreu um erro ao enviar o e-mail";
 	
 	/* JWT */
 	
 	public static final String HEADER_AUTH = "Authorization";
 	public static final String VALUE_HEADER_AUTH = "Bearer ";
+	
+	/* Tipo Operação Email TAREFA*/
+	public static final String CRIACAO = "C";
+	public static final String ATUALIZACAO = "U";
+	public static final String FINALIZACAO = "F";
+	public static final String CANCELAMENTO = "CC";
+	
 }

@@ -79,7 +79,7 @@ public class FuncionarioService {
 	}
 	
 	private Boolean isExistingFuncionarioByCpf(String cpf) {
-		return funcionarioRepository.existsByCfp(cpf);
+		return funcionarioRepository.existsByCpf(cpf);
 	}
 	
 	private Funcionario dtoToFuncionario(FuncionarioRequestDTO funcionarioRequest) {

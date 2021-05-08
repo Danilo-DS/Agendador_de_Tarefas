@@ -20,5 +20,6 @@ public class TarefaResponseDTO {
 	private EmpresaResponseDTO empresa; 
 	private String prioridade;
 	private String statusTarefa;
-	private String convidados;
+	private String convidadosEmail;
+	private String convidadosTelefone;
 }

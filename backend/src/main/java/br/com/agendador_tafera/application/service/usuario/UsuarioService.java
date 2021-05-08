@@ -1,7 +1,6 @@
 package br.com.agendador_tafera.application.service.usuario;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;

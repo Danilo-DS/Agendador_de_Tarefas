@@ -50,7 +50,7 @@ public class Usuario implements Serializable {
 	private String tipoUsuario;
 	
 
-	@OneToMany(cascade = CascadeType.REMOVE,fetch = FetchType.EAGER)
+	@OneToMany
 	@JoinTable(name = "TB_PERFIL_USUARIO",
 	   joinColumns =  @JoinColumn(name = "ID_USUARIO", foreignKey = @ForeignKey(name = "FK_USER_PERFIL")),//, referencedColumnName = "PK_USUARIO"),
 	   inverseJoinColumns = @JoinColumn(name = "ID_PERFIL", foreignKey = @ForeignKey(name = "FK_PERFIL_USER")))//, referencedColumnName = "PK_PERFIL_USUARIO"))

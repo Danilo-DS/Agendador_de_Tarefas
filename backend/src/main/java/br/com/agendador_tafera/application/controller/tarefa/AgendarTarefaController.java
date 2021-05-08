@@ -30,21 +30,21 @@ public class AgendarTarefaController {
 	/* EndPoint listar todas as Tarefa */
 	@GetMapping
 	@PreAuthorize("hasRole('ROLE_G')")
-	public ResponseEntity<?> listAll(){
+	public ResponseEntity<?> listarTarefas(){
 		return ResponseEntity.ok(service.listarTarefas());
 	}
 	
 	/* EndPoint Buscar tarefa por id*/
 	@GetMapping(value = "/{id}")
 	@PreAuthorize("hasRole('ROLE_G') or hasRole('ROLE_U')")
-	public ResponseEntity<?> findTask(@PathVariable Long id){
+	public ResponseEntity<?> buscarTarefa(@PathVariable Long id){
 		return ResponseEntity.ok(service.buscarTarefaPorId(id));
 	}
 	
 	/* EndPoint Lista Tarefas por usuario*/
 	@GetMapping(value = "/{id}/usuario")
 	@PreAuthorize("hasRole('ROLE_G') or hasRole('ROLE_U')")
-	public ResponseEntity<List<?>> findTaskUser(@PathVariable Long id){
+	public ResponseEntity<List<?>> buscarTarefaUsuario(@PathVariable Long id){
 		return ResponseEntity.ok(service.buscarTarefaPorUsuario(id));
 	}
 	
@@ -52,16 +52,27 @@ public class AgendarTarefaController {
 	@PostMapping
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@PreAuthorize("hasRole('ROLE_G')")
-	public void save(@RequestBody TarefaRequestDTO tarefaRequest){
+	public void salvar(@RequestBody TarefaRequestDTO tarefaRequest){
 		service.salvarTarefa(tarefaRequest);
 	}
 	
 	/* EndPoint Atualizar Tarefa */
-	@PutMapping
+	@PutMapping(value = "/{id}")
 	@PreAuthorize("hasRole('ROLE_G')")
-	public ResponseEntity<?> update(@RequestBody TarefaRequestDTO tarefaRequest){
-		service.atualizarTarefa(tarefaRequest);
-		return ResponseEntity.ok().build();
+	public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody TarefaRequestDTO tarefaRequest){
+		return ResponseEntity.ok(service.atualizarTarefa(tarefaRequest, id));
+	}
+	
+	@PutMapping(value = "/{id}/finalizar")
+	@PreAuthorize("hasRole('ROLE_G')")
+	public ResponseEntity<?> finalizar(@PathVariable Long id){
+		return ResponseEntity.ok(service.finalizarTarefa(id));
+	}
+	
+	@PutMapping(value = "/{id}/cancelar")
+	@PreAuthorize("hasRole('ROLE_G')")
+	public ResponseEntity<?> cancelar(@PathVariable Long id){
+		return ResponseEntity.ok(service.cancelarTarefa(id));
 	}
 	
 	/* EndPoint Excluir Tarefa */
