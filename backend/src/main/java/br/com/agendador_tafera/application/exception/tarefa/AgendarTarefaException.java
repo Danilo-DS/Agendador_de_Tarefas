@@ -1,4 +1,4 @@
-package br.com.agendador_tafera.application.exception.agendarTarefa;
+package br.com.agendador_tafera.application.exception.tarefa;
 
 import java.util.List;
 

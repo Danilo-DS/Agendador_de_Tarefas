@@ -4,18 +4,24 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import br.com.agendador_tafera.application.config.ModelConvert;
 import br.com.agendador_tafera.application.dto.funcionario.FuncionarioRequestDTO;
 import br.com.agendador_tafera.application.dto.funcionario.FuncionarioResponseDTO;
+import br.com.agendador_tafera.application.exception.funcionario.FuncionarioException;
+import br.com.agendador_tafera.application.model.Empresa;
 import br.com.agendador_tafera.application.model.Endereco;
 import br.com.agendador_tafera.application.model.Funcionario;
+import br.com.agendador_tafera.application.model.Usuario;
 import br.com.agendador_tafera.application.repository.FuncionarioRepository;
 import br.com.agendador_tafera.application.service.empresa.EmpresaService;
 import br.com.agendador_tafera.application.service.endereco.EnderecoService;
 import br.com.agendador_tafera.application.service.usuario.UsuarioService;
+import br.com.agendador_tafera.application.utils.Utilitarios;
 
 @Service
 public class FuncionarioService {
@@ -32,56 +38,86 @@ public class FuncionarioService {
 	@Autowired
 	private EnderecoService enderecoService;
 	
-	public List<Funcionario> listAllFuncionario() {		
-		return funcionarioRepository.findAll();
+	@Transactional(readOnly = true)
+	public List<FuncionarioResponseDTO> listarFuncionario() {		
+		return toListFuncionarioDto(funcionarioRepository.findAll());
 	}
 	
-	public List<FuncionarioResponseDTO> listAllFuncionario(String cnpjEmpresa) {		
-		return toListFuncionarioDto(funcionarioRepository.findByEmpresa(empresaService.findEmpresaCnpj(cnpjEmpresa)));
+	@Transactional(readOnly = true)
+	public List<FuncionarioResponseDTO> listaFuncionariosEmpresa(String cnpjEmpresa) {		
+		return toListFuncionarioDto(funcionarioRepository.findByEmpresaCnpj(cnpjEmpresa));
 	}
 	
-	public Funcionario findFuncionarioId(Long id) {
-		return funcionarioRepository.findById(id).orElseThrow(() -> new RuntimeException());
+	@Transactional(readOnly = true)
+	public Funcionario buscarFuncionarioPorId(Long id) {
+		return funcionarioRepository.findById(id).orElseThrow(() -> new FuncionarioException(Utilitarios.ERROR_BUSCAR_FUNCIONARIO, HttpStatus.NOT_FOUND));
 	}
 	
-	public void saveFuncionario(FuncionarioRequestDTO funcionarioRequest) {
-		Funcionario funcionario = dtoToFuncionario(funcionarioRequest);
-		funcionario.setDataNascimento(funcionario.converteData(funcionarioRequest.getDtNascimento()));
-		funcionarioRepository.save(funcionario);
-	}
-	
-	public FuncionarioResponseDTO updateFuncionario(FuncionarioRequestDTO funcionarioRequest) {
-		String cpf = funcionarioRequest.getCpf();
-		
-		if(!isExistingFuncionarioByCpf(cpf)) {
-			throw new RuntimeException("");
+	@Transactional
+	public FuncionarioResponseDTO salvarFuncionario(FuncionarioRequestDTO funcionarioRequest) {
+		if(isExisteFuncionarioPorCpf(funcionarioRequest.getCpf())) {
+			throw new FuncionarioException(Utilitarios.ERROR_SALVAR_FUNCIONARIO, HttpStatus.BAD_REQUEST);
 		}
 		
-		Funcionario funcionario = atualizarDados(findFuncionarioByCpf(cpf), funcionarioRequest);
+		Empresa empresa = empresaService.setarEmpresa(funcionarioRequest.getEmpresa().getCnpj(), funcionarioRequest.getEmpresa().getId());
+				
+		Long idUsuario = usuarioService.salvarUsuario(funcionarioRequest.getUsuarioFuncioario()).getId();
+		Funcionario funcionario = dtoToFuncionario(funcionarioRequest);
+		funcionario.setDataNascimento(funcionario.formatarData(funcionarioRequest.getDtNascimento()));
+		funcionario.setEmpresa(empresa);
+		funcionario.setUsuario(usuarioService.buscarUsuarioPorId(idUsuario));
+		
 		funcionarioRepository.save(funcionario);
 		return funcionarioToDto(funcionario);
 	}
 	
-	public void deleteFuncionario(Long id) {
-		if(!isExistingFuncionario(id)) {
-			throw new RuntimeException();
+	@Transactional
+	public FuncionarioResponseDTO atualizarFuncionario(FuncionarioRequestDTO funcionarioRequest, Long id) {
+		if(!isExisteFuncionarioPorId(id)) {
+			throw new FuncionarioException(Utilitarios.ERROR_ATUALIZAR_FUNCIONARIO, HttpStatus.BAD_REQUEST);
+		}
+		
+		Funcionario funcionario = atualizarDados(buscarFuncionarioPorId(id), funcionarioRequest);
+		funcionarioRepository.save(funcionario);
+		return funcionarioToDto(funcionario);
+	}
+	
+	@Transactional
+	public void deletarFuncionario(Long id) {
+		if(!isExisteFuncionarioPorId(id)) {
+			throw new FuncionarioException(Utilitarios.ERROR_DELETAR_FUNCIONARIO, HttpStatus.NOT_FOUND);
 		}
 		
 		funcionarioRepository.deleteById(id);
 	}
 	
-	public Funcionario findFuncionarioByCpf(String cpf) {
-		return funcionarioRepository.findByCpf(cpf).orElseThrow(() -> new RuntimeException(""));
+	@Transactional(readOnly = true)
+	public Funcionario buscarFuncionarioPorCpf(String cpf) {
+		return funcionarioRepository.findByCpf(cpf).orElseThrow(() -> new FuncionarioException(Utilitarios.ERROR_BUSCAR_FUNCIONARIO, HttpStatus.NOT_FOUND));
 	}
 	
-	private Boolean isExistingFuncionario(Long id) {
+	@Transactional(readOnly = true)
+	public void validaFuncionarioEmpresa(List<Usuario> usuarios, Long idEmpresa) {
+		
+		usuarios.forEach(u -> {
+			if(!funcionarioRepository.existsByUsuarioAndEmpresaId(u, idEmpresa)) {
+				throw new FuncionarioException("Usuario/Funcionario Não Está Associado a Empresa\n"
+						+ "ID: " + u.getId() + " Email: " + u.getEmail() , HttpStatus.BAD_REQUEST);
+			}
+		});
+	}
+	
+	@Transactional(readOnly = true)
+	private Boolean isExisteFuncionarioPorId(Long id) {
 		return funcionarioRepository.existsById(id);
 	}
 	
-	private Boolean isExistingFuncionarioByCpf(String cpf) {
+	@Transactional(readOnly = true)
+	private Boolean isExisteFuncionarioPorCpf(String cpf) {
 		return funcionarioRepository.existsByCpf(cpf);
 	}
 	
+	@Transactional(readOnly = true)
 	private Funcionario dtoToFuncionario(FuncionarioRequestDTO funcionarioRequest) {
 		return ModelConvert.mapper().map(funcionarioRequest, Funcionario.class);
 	}
@@ -94,17 +130,18 @@ public class FuncionarioService {
 		return funcionario.stream().map(func->ModelConvert.mapper().map(func, FuncionarioResponseDTO.class)).collect(Collectors.toList());
 	}
 	
-	private Funcionario atualizarDados(Funcionario funcionario, FuncionarioRequestDTO funcionarioRequestDTO) {
+	private Funcionario atualizarDados(Funcionario funcionario, FuncionarioRequestDTO funcionarioRequest) {
 		
-		funcionario.setNome(StringUtils.hasText(funcionarioRequestDTO.getNome()) ? funcionarioRequestDTO.getNome() : funcionario.getNome());
-		funcionario.setCpf(StringUtils.hasText(funcionarioRequestDTO.getCpf()) ? funcionarioRequestDTO.getCpf() : funcionario.getCpf());
-		funcionario.setPisPasep(StringUtils.hasText(funcionarioRequestDTO.getPisPasep()) ? funcionarioRequestDTO.getPisPasep() : funcionario.getPisPasep());
-		funcionario.setDataNascimento(StringUtils.hasText(funcionarioRequestDTO.getNome()) ? funcionario.converteData(funcionarioRequestDTO.getDtNascimento()) : funcionario.getDataNascimento());
-		funcionario.setCelular(StringUtils.hasText(funcionarioRequestDTO.getNome()) ? funcionarioRequestDTO.getNome() : funcionario.getNome());
-		funcionario.setTelefone(StringUtils.hasText(funcionarioRequestDTO.getNome()) ? funcionarioRequestDTO.getNome() : funcionario.getNome());
-		funcionario.setEmpresa(empresaService.findEmpresaCnpj(funcionarioRequestDTO.getEmpresa().getCnpj()));
-		funcionario.setEndereco(Endereco.atualizarEndereco(enderecoService.findEnderecoId(funcionario.getEmpresa().getId()), funcionarioRequestDTO.getEndereco()));
-		funcionario.setUsuario(usuarioService.buscarUsuarioPorId(funcionario.getUsuario().getId()));
+		funcionario.setNome(StringUtils.hasText(funcionarioRequest.getNome()) ? funcionarioRequest.getNome() : funcionario.getNome());
+		funcionario.setCpf(StringUtils.hasText(funcionarioRequest.getCpf()) ? funcionarioRequest.getCpf() : funcionario.getCpf());
+		funcionario.setPisPasep(StringUtils.hasText(funcionarioRequest.getPisPasep()) ? funcionarioRequest.getPisPasep() : funcionario.getPisPasep());
+		funcionario.setDataNascimento(StringUtils.hasText(funcionarioRequest.getDtNascimento()) ? funcionario.formatarData(funcionarioRequest.getDtNascimento()) : funcionario.getDataNascimento());
+		funcionario.setCelular(StringUtils.hasText(funcionarioRequest.getCelular()) ? funcionarioRequest.getCelular() : funcionario.getCelular());
+		funcionario.setTelefone(StringUtils.hasText(funcionarioRequest.getTelefone()) ? funcionarioRequest.getTelefone() : funcionario.getTelefone());
+		funcionario.setEmpresa(empresaService.setarEmpresa(funcionarioRequest.getEmpresa().getCnpj(),funcionarioRequest.getEmpresa().getId()));
+		funcionario.setEndereco(Endereco.atualizarEndereco(enderecoService.buscarEnderecoPorId(funcionario.getEndereco().getId()), funcionarioRequest.getEndereco()));
+		funcionario.setUsuario(usuarioService.buscarUsuarioPorId(usuarioService.atualizarUsuario(funcionarioRequest.getUsuarioFuncioario(), funcionario.getUsuario().getId()).getId()));
+		
 		return funcionario;
 	}
 	

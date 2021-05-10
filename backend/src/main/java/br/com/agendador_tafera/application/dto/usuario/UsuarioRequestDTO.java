@@ -13,10 +13,14 @@ import lombok.NoArgsConstructor;
 public class UsuarioRequestDTO {
 	
 	private String nome;
+	
 	private String email;
+	
 	private String senha;
-	private String telefone;
+	
 	private String celular;
+	
 	private String tipoUsuario;
+	
 	private List<PerfilUsuario> perfis;
 }

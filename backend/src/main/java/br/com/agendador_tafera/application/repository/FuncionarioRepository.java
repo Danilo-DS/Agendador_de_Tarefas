@@ -6,8 +6,8 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import br.com.agendador_tafera.application.model.Empresa;
 import br.com.agendador_tafera.application.model.Funcionario;
+import br.com.agendador_tafera.application.model.Usuario;
 
 @Repository
 public interface FuncionarioRepository extends JpaRepository<Funcionario, Long>{
@@ -16,6 +16,8 @@ public interface FuncionarioRepository extends JpaRepository<Funcionario, Long>{
 	
 	Boolean existsByCpf(String cpf);
 	
-	List<Funcionario> findByEmpresa(Empresa empresa);
+	List<Funcionario> findByEmpresaCnpj(String cnpj);
+	
+	Boolean existsByUsuarioAndEmpresaId(Usuario usuario, Long idEmpresa);
 	
 }

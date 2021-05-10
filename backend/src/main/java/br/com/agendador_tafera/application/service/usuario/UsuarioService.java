@@ -1,5 +1,6 @@
 package br.com.agendador_tafera.application.service.usuario;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,8 +15,10 @@ import br.com.agendador_tafera.application.dto.usuario.UsuarioRequestDTO;
 import br.com.agendador_tafera.application.dto.usuario.UsuarioResponseDTO;
 import br.com.agendador_tafera.application.dto.usuario.UsuarioTarefaDTO;
 import br.com.agendador_tafera.application.exception.usuario.UsuarioException;
+import br.com.agendador_tafera.application.model.PerfilUsuario;
 import br.com.agendador_tafera.application.model.Usuario;
 import br.com.agendador_tafera.application.repository.UsuarioRepository;
+import br.com.agendador_tafera.application.service.perfilUsuario.PerfilService;
 import br.com.agendador_tafera.application.utils.Utilitarios;
 
 @Service
@@ -23,6 +26,9 @@ public class UsuarioService {
 	
 	@Autowired
 	private UsuarioRepository userRepository;
+	
+	@Autowired
+	private PerfilService perfilService;
 	
 	@Transactional(readOnly = true)
 	public List<UsuarioResponseDTO> listarUsuarios(){
@@ -41,22 +47,26 @@ public class UsuarioService {
 	
 	@Transactional
 	public UsuarioResponseDTO salvarUsuario(UsuarioRequestDTO  usuarioRequest) {
+		if(isExisteUsuarioPorEmail(usuarioRequest.getEmail())) {
+			throw new UsuarioException("Já existe um usuario com este E-mail", HttpStatus.BAD_REQUEST);
+		}
+		
 		Usuario usuario = dtoToUsuario(usuarioRequest);
-		usuario.setSenha(usuario.encriptPassword(usuario.getSenha()));
+		usuario.setSenha(usuario.encriptPassword(usuario.getSenha()));	
+		usuario.setPerfis(validaPerfilUsuario(usuario.getPerfis()));
 		userRepository.save(usuario);
+		
 		return usuarioToDto(usuario);
 	}
 	
 	@Transactional
-	public UsuarioResponseDTO atualizarUsuario(UsuarioRequestDTO usuarioRequest) {
+	public UsuarioResponseDTO atualizarUsuario(UsuarioRequestDTO usuarioRequest, Long id) {
 		
-		String email = usuarioRequest.getEmail();
-		
-		if(!isExisteUsuarioPorEmail(email)) {
+		if(!isExisteUsuarioPorId(id)) {
 			throw new UsuarioException(Utilitarios.ERROR_ATUALIZAR_USUARIO, HttpStatus.NOT_FOUND);
 		}
 		
-		Usuario usuario = atualizaDados(userRepository.findByEmail(email).get(), usuarioRequest);
+		Usuario usuario = atualizaDados(userRepository.findById(id).get(), usuarioRequest);
 		userRepository.save(usuario);
 		
 		return usuarioToDto(usuario);
@@ -83,22 +93,21 @@ public class UsuarioService {
 		return userRepository.existsByEmail(email);
 	}
 	
-	public Boolean isExisteUsuarios(List<UsuarioTarefaDTO> usuarioTarefa) {
-		Boolean todosExistem = true;
-		for (UsuarioTarefaDTO ut : usuarioTarefa) {
-			if(!validaUsuarioTarefa(ut)) {
-				return !todosExistem;
-			}
-		}
-		return todosExistem;
+	public List<Usuario> validarUsuariosTarefa(List<UsuarioTarefaDTO> usuarioTarefa) {
+
+		List<Usuario> usuarios = new ArrayList<>();
+		
+		usuarioTarefa.forEach(u ->{
+			usuarios.add(setarUsuario(u.getEmail(), u.getId()));
+		});
+		
+		return usuarios;
 	}
 	
-	private Boolean validaUsuarioTarefa(UsuarioTarefaDTO usuarioTarefa) {
-		if(StringUtils.hasText(usuarioTarefa.getEmail())) {
-			return isExisteUsuarioPorEmail(usuarioTarefa.getEmail());
-		}
-		
-		return isExisteUsuarioPorId(usuarioTarefa.getId());	
+	@Transactional(readOnly = true)
+	public Usuario setarUsuario(String email, Long id) {
+		var idEmailUsuario = StringUtils.hasText(email) ? email : id;
+		return (idEmailUsuario instanceof String) ? buscarUsuarioPorEmail((String) idEmailUsuario) : buscarUsuarioPorId((Long) idEmailUsuario);
 	}
 	
 	private Usuario dtoToUsuario(UsuarioRequestDTO usuarioRequest) {
@@ -111,11 +120,11 @@ public class UsuarioService {
 	}
 	
 	private UsuarioResponseDTO usuarioToDto(Usuario usuario) {
-		UsuarioResponseDTO usuarioResponse = ModelConvert.mapper().map(usuario, UsuarioResponseDTO.class);
-		usuario.getPerfis().forEach(p -> {
-			usuarioResponse.getPermissao().add(p.getPerfil().getPerfil());
-		});
-		return usuarioResponse;
+		return ModelConvert.mapper().map(usuario, UsuarioResponseDTO.class);
+	}
+	
+	private List<PerfilUsuario> validaPerfilUsuario(List<PerfilUsuario> perfil) {
+		return perfil.stream().map(p -> perfilService.buscarPerfilPorId(p.getId())).collect(Collectors.toList());
 	}
 	
 	private Usuario atualizaDados(Usuario usuario, UsuarioRequestDTO usuarioRequest) {
@@ -123,7 +132,7 @@ public class UsuarioService {
 		usuario.setEmail(StringUtils.hasText(usuarioRequest.getEmail()) ? usuarioRequest.getEmail() : usuario.getEmail());
 		usuario.setSenha(usuario.encriptPassword(StringUtils.hasText(usuarioRequest.getSenha()) ? usuarioRequest.getSenha() : usuario.getSenha()));
 		usuario.setTipoUsuario(StringUtils.hasText(usuarioRequest.getTipoUsuario()) ? usuarioRequest.getTipoUsuario() : usuario.getTipoUsuario());
-		usuario.setPerfis(usuarioRequest.getPerfis());
+		usuario.setPerfis(validaPerfilUsuario(usuarioRequest.getPerfis()));
 		return usuario;
 	}
 	

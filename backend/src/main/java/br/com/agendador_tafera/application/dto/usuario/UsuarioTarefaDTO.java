@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class UsuarioTarefaDTO {
 	
 	private Long id;
+	
 	private String email;
 }

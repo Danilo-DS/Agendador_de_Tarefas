@@ -1,6 +1,6 @@
 package br.com.agendador_tafera.application.dto.funcionario;
 
-import br.com.agendador_tafera.application.dto.empresa.EmpresaRequestDTO;
+import br.com.agendador_tafera.application.dto.empresa.EmpresaDTO;
 import br.com.agendador_tafera.application.dto.endereco.EnderecoDTO;
 import br.com.agendador_tafera.application.dto.usuario.UsuarioRequestDTO;
 import lombok.AllArgsConstructor;
@@ -26,7 +26,7 @@ public class FuncionarioRequestDTO {
 	
 	private EnderecoDTO endereco;
 	
-	private EmpresaRequestDTO empresa;
+	private EmpresaDTO empresa;
 	
-	private UsuarioRequestDTO usuario;
+	private UsuarioRequestDTO usuarioFuncioario;
 }

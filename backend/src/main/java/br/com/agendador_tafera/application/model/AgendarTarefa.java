@@ -19,6 +19,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import br.com.agendador_tafera.application.dto.tarefa.TarefaRequestDTO;
 import br.com.agendador_tafera.application.enums.StatusTarefa;
 import lombok.AllArgsConstructor;
@@ -45,12 +48,13 @@ public class AgendarTarefa implements Serializable{
 	private String descricao;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
+	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinTable(name = "TB_TAREFAS_USUARIOS",
 		joinColumns = @JoinColumn(name = "USUARIO_ID", foreignKey = @ForeignKey(name = "FK_USER_TAREFA")),
 		inverseJoinColumns = @JoinColumn(name = "ID_PERFIL", foreignKey = @ForeignKey(name = "FK_TAREFA")))
 	private List<Usuario> usuario;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "EMPRESA_ID", foreignKey = @ForeignKey(name = "FK_TAR_EMPRESA"))
 	private Empresa empresa;
 	
@@ -81,7 +85,7 @@ public class AgendarTarefa implements Serializable{
 	}
 	
 	public static AgendarTarefa builder(Empresa empresa, List<Usuario> usuario, TarefaRequestDTO tarefaRequest) {
-		return new AgendarTarefa(null, tarefaRequest.getTitulo(), tarefaRequest.getDescricao(), usuario, empresa, tarefaRequest.getConvidadosEmail().toString(), 
-								tarefaRequest.getConvidadosEmail().toString(), tarefaRequest.getPrioridade(), convertData(), null, null, StatusTarefa.AGENDADA);
+		return new AgendarTarefa(null, tarefaRequest.getTitulo(), tarefaRequest.getDescricao(), usuario, empresa, tarefaRequest.getConvidadosEmail().toString().replace("[", "").replace("]", ""), 
+								tarefaRequest.getConvidadosTelefone().toString().replace("[", "").replace("]", ""), tarefaRequest.getPrioridade(), convertData(), null, null, StatusTarefa.AGENDADA);
 	}
 }

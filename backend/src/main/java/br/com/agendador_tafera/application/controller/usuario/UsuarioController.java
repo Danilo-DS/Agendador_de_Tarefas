@@ -29,37 +29,37 @@ public class UsuarioController {
 	/* EndPoint Listar todos os Usuarios*/
 	@GetMapping
 	@PreAuthorize("hasRole('ROLE_ADM')")
-	public ResponseEntity<?> listAll(){
+	public ResponseEntity<?> listarUsuario(){
 		return ResponseEntity.ok(service.listarUsuarios());
 	}
 	
 	/* EndPoint Buscar Usuarios por id*/
 	@GetMapping(value = "/{id}")
-	@PreAuthorize("hasRole('ROLE_G')")
-	public ResponseEntity<?> findUser(@PathVariable Long id){
+	@PreAuthorize("hasRole('ROLE_ADM')")
+	public ResponseEntity<?> buscarUsuario(@PathVariable Long id){
 		return ResponseEntity.ok(service.buscarUsuarioPorId(id)); 
 	}
 	
 	/* EndPoint Salvar Usuarios*/
 	@PostMapping
-	@PreAuthorize("hasRole('ROLE_G')")
+	@PreAuthorize("hasRole('ROLE_ADM')")
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@ResponseBody
-	public UsuarioResponseDTO save(@RequestBody UsuarioRequestDTO usuarioRequest){
+	public UsuarioResponseDTO salvar(@RequestBody UsuarioRequestDTO usuarioRequest){
 		return service.salvarUsuario(usuarioRequest);
 	}
 	
 	/* EndPoint Atualizar dados do Usuario*/
-	@PutMapping
-	@PreAuthorize("hasRole('ROLE_G') or hasRole('ROLE_U')")
-	public ResponseEntity<?> update(@RequestBody UsuarioRequestDTO usuarioRequest){
-		return ResponseEntity.ok(service.atualizarUsuario(usuarioRequest));
+	@PutMapping(value = "/{id}")
+	@PreAuthorize("hasRole('ROLE_ADM') or hasRole('ROLE_U')")
+	public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody UsuarioRequestDTO usuarioRequest){
+		return ResponseEntity.ok(service.atualizarUsuario(usuarioRequest, id));
 	}
 	
 	/* EndPoint Exclusão do usuario*/
 	@DeleteMapping(value = "/{id}")
-	@PreAuthorize("hasRole('ROLE_G')")
-	public ResponseEntity<?> delete(@PathVariable Long id){
+	@PreAuthorize("hasRole('ROLE_ADM')")
+	public ResponseEntity<?> deletar(@PathVariable Long id){
 		service.deletarUsuario(id);
 		return ResponseEntity.noContent().build(); 
 	}

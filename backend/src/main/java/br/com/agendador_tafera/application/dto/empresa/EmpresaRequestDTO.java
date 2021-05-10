@@ -16,5 +16,5 @@ public class EmpresaRequestDTO {
 	private String cnpj;
 	private String inscricaoEstadual;
 	private EnderecoDTO endereco;
-	private UsuarioRequestDTO usuario;
+	private UsuarioRequestDTO usuarioEmpresa;
 }

@@ -1,6 +1,5 @@
 package br.com.agendador_tafera.application.service.tarefa;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -9,20 +8,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import br.com.agendador_tafera.application.config.ModelConvert;
 import br.com.agendador_tafera.application.dto.tarefa.TarefaRequestDTO;
 import br.com.agendador_tafera.application.dto.tarefa.TarefaResponseDTO;
-import br.com.agendador_tafera.application.dto.usuario.UsuarioTarefaDTO;
 import br.com.agendador_tafera.application.enums.StatusTarefa;
-import br.com.agendador_tafera.application.exception.agendarTarefa.AgendarTarefaException;
+import br.com.agendador_tafera.application.exception.tarefa.AgendarTarefaException;
 import br.com.agendador_tafera.application.model.AgendarTarefa;
 import br.com.agendador_tafera.application.model.Empresa;
 import br.com.agendador_tafera.application.model.Usuario;
 import br.com.agendador_tafera.application.repository.AgendaTarefaRepository;
 import br.com.agendador_tafera.application.service.email.SendEmailService;
 import br.com.agendador_tafera.application.service.empresa.EmpresaService;
+import br.com.agendador_tafera.application.service.funcionario.FuncionarioService;
 import br.com.agendador_tafera.application.service.usuario.UsuarioService;
 import br.com.agendador_tafera.application.utils.Utilitarios;
 
@@ -41,8 +41,8 @@ public class AgendarTarefaService {
 	@Autowired
 	private EmpresaService empresaService;
 	
-//	private FuncionarioService funcionarioService;
-	
+	@Autowired
+	private FuncionarioService funcionarioService;
 	
 	@Transactional(readOnly = true)
 	public List<TarefaResponseDTO> listarTarefas(){
@@ -55,21 +55,31 @@ public class AgendarTarefaService {
 	}
 	
 	@Transactional(readOnly = true)
-	public List<TarefaResponseDTO> buscarTarefaPorEmpresa(Long id) {
-		return toListTarefaDto(agendaRepository.findByEmpresa(empresaService.findEmpresaId(id)));
+	public List<TarefaResponseDTO> listarTarefaPorEmpresa(Long id) {
+		return toListTarefaDto(agendaRepository.findByEmpresa(empresaService.buscarEmpresaPorId(id)));
 	}
 	
 	@Transactional(readOnly = true)
-	public List<TarefaResponseDTO> buscarTarefaPorUsuario(Long id) {
+	public List<TarefaResponseDTO> listarTarefaPorUsuario(Long id) {
 		return toListTarefaDto(agendaRepository.findByUsuario(usuarioService.buscarUsuarioPorId((id))));
 	}
 	
 	@Transactional
 	public TarefaResponseDTO salvarTarefa(TarefaRequestDTO tarefaRequest) {
 		
-		Empresa empresa = validaEmpresaTarefa(tarefaRequest.getEmpresa().getCnpj(), tarefaRequest.getEmpresa().getId());
+		Empresa empresa = null;
+		List<Usuario> usuarios = null;
 		
-		List<Usuario> usuarios = validaUsuarioTarefa(tarefaRequest.getUsuario());		
+		if(!ObjectUtils.isEmpty(tarefaRequest.getEmpresa())) {
+			empresa = empresaService.setarEmpresa(tarefaRequest.getEmpresa().getCnpj(), tarefaRequest.getEmpresa().getId());
+			
+			usuarios = usuarioService.validarUsuariosTarefa(tarefaRequest.getUsuario());
+			
+			funcionarioService.validaFuncionarioEmpresa(usuarios, empresa.getId());
+		}
+		else {
+			usuarios = usuarioService.validarUsuariosTarefa(tarefaRequest.getUsuario());
+		}
 		
 		AgendarTarefa agendarTarefa = AgendarTarefa.builder(empresa, usuarios, tarefaRequest);
 		
@@ -84,11 +94,24 @@ public class AgendarTarefaService {
 	@Transactional
 	public TarefaResponseDTO atualizarTarefa(TarefaRequestDTO tarefaRequest, Long id) {
 		
+		List<Usuario> usuarios = null;
+		
 		if (!isExisteTarefaPorId(id)) { 
 		 	throw new AgendarTarefaException(Utilitarios.ERROR_BUSCAR_TAREFA, HttpStatus.NOT_FOUND);
 		}
 		
-		AgendarTarefa tarefaAtualizada = atualizarDados(agendaRepository.findById(id).get(), tarefaRequest);
+		AgendarTarefa tarefaExistente = agendaRepository.findById(id).get();
+		
+		if(!ObjectUtils.isEmpty(tarefaExistente.getEmpresa())) {
+			usuarios = usuarioService.validarUsuariosTarefa(tarefaRequest.getUsuario());
+			
+			funcionarioService.validaFuncionarioEmpresa(usuarios, tarefaExistente.getEmpresa().getId());
+		}
+		else {
+			usuarios = usuarioService.validarUsuariosTarefa(tarefaRequest.getUsuario());
+		}
+		
+		AgendarTarefa tarefaAtualizada = atualizarDados(tarefaExistente, tarefaRequest);
 		
 		agendaRepository.save(tarefaAtualizada);
 		
@@ -124,7 +147,7 @@ public class AgendarTarefaService {
 	}
 	
 	@Transactional
-	public void deletatTarefa(Long id) {
+	public void deletarTarefa(Long id) {
 
 		if(!isExisteTarefaPorId(id)) {
 			throw new AgendarTarefaException(Utilitarios.ERROR_DELETAR_TAREFA, HttpStatus.NOT_FOUND);
@@ -169,34 +192,12 @@ public class AgendarTarefaService {
 		
 	}
 	
-	private List<Usuario> validaUsuarioTarefa(List<UsuarioTarefaDTO> usuarioTarefa) {
-		List<Usuario> usuarios = new ArrayList<>();
-		
-		if(!usuarioService.isExisteUsuarios(usuarioTarefa)){
-			throw new AgendarTarefaException(Utilitarios.ERROR_SALVAR_TAREFA, HttpStatus.NOT_FOUND);
-		}
-		
-		usuarioTarefa.forEach(ut -> {
-			if(StringUtils.hasText(ut.getEmail())) {
-				usuarios.add(usuarioService.buscarUsuarioPorEmail(ut.getEmail()));
-			}
-			usuarios.add(usuarioService.buscarUsuarioPorId(ut.getId()));
-		});
-		
-		return usuarios;
-	}
-	
-	private Empresa validaEmpresaTarefa(String cnpj, Long id) {
-		var idCnpjEmpresa = StringUtils.hasText(cnpj) ? cnpj : id;
-		return (idCnpjEmpresa instanceof String) ? empresaService.findEmpresaCnpj((String) idCnpjEmpresa) : empresaService.findEmpresaId((Long) idCnpjEmpresa);
-	}
-	
 	private AgendarTarefa atualizarDados(AgendarTarefa tarefa, TarefaRequestDTO tarefaRequest) {
 		
 		tarefa.setTitulo(StringUtils.hasText(tarefaRequest.getTitulo()) ? tarefaRequest.getTitulo() : tarefa.getTitulo());
 		tarefa.setDescricao(StringUtils.hasText(tarefaRequest.getDescricao()) ? tarefaRequest.getDescricao() : tarefa.getDescricao());
-		tarefa.setUsuario(validaUsuarioTarefa(tarefaRequest.getUsuario()));
-		tarefa.setEmpresa(validaEmpresaTarefa(tarefaRequest.getEmpresa().getCnpj(), tarefaRequest.getEmpresa().getId()));
+		tarefa.setUsuario(usuarioService.validarUsuariosTarefa(tarefaRequest.getUsuario()));
+		//tarefa.setEmpresa(empresaService.setarEmpresa(tarefaRequest.getEmpresa().getCnpj(), tarefaRequest.getEmpresa().getId()));
 		tarefa.setConvidadosEmail(CollectionUtils.isEmpty(tarefaRequest.getConvidadosEmail()) ? tarefaRequest.getConvidadosEmail().toString() : tarefa.getConvidadosEmail().toString());
 		tarefa.setConvidadosTelefone(CollectionUtils.isEmpty(tarefaRequest.getConvidadosTelefone()) ? tarefaRequest.getConvidadosTelefone().toString() : tarefa.getConvidadosTelefone().toString());
 		tarefa.setPrioridade(StringUtils.hasText(tarefaRequest.getPrioridade()) ? tarefaRequest.getPrioridade() : tarefa.getPrioridade());

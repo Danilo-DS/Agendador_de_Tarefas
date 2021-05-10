@@ -1,7 +1,5 @@
 package br.com.agendador_tafera.application.controller.tarefa;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +11,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.agendador_tafera.application.dto.tarefa.TarefaRequestDTO;
+import br.com.agendador_tafera.application.dto.tarefa.TarefaResponseDTO;
 import br.com.agendador_tafera.application.service.tarefa.AgendarTarefaService;
 
 
@@ -27,59 +27,60 @@ public class AgendarTarefaController {
 	@Autowired
 	private AgendarTarefaService service;
 	
-	/* EndPoint listar todas as Tarefa */
 	@GetMapping
-	@PreAuthorize("hasRole('ROLE_G')")
+	@PreAuthorize("hasRole('ROLE_MST')")
 	public ResponseEntity<?> listarTarefas(){
 		return ResponseEntity.ok(service.listarTarefas());
 	}
 	
-	/* EndPoint Buscar tarefa por id*/
 	@GetMapping(value = "/{id}")
-	@PreAuthorize("hasRole('ROLE_G') or hasRole('ROLE_U')")
+	@PreAuthorize("hasRole('ROLE_MST')")
 	public ResponseEntity<?> buscarTarefa(@PathVariable Long id){
 		return ResponseEntity.ok(service.buscarTarefaPorId(id));
 	}
 	
-	/* EndPoint Lista Tarefas por usuario*/
 	@GetMapping(value = "/{id}/usuario")
-	@PreAuthorize("hasRole('ROLE_G') or hasRole('ROLE_U')")
-	public ResponseEntity<List<?>> buscarTarefaUsuario(@PathVariable Long id){
-		return ResponseEntity.ok(service.buscarTarefaPorUsuario(id));
+	@PreAuthorize("hasRole('ROLE_MST')")
+	public ResponseEntity<?> listarTarefaUsuario(@PathVariable Long id){
+		return ResponseEntity.ok(service.listarTarefaPorUsuario(id));
 	}
 	
-	/* EndPoint Salvar Tarefa */
+	@GetMapping(value = "/{id}/empresa")
+	@PreAuthorize("hasRole('ROLE_MST')")
+	public ResponseEntity<?> listarTarefaEmpresa(@PathVariable Long id){
+		return ResponseEntity.ok(service.listarTarefaPorEmpresa(id));
+	}
+	
 	@PostMapping
 	@ResponseStatus(value = HttpStatus.CREATED)
-	@PreAuthorize("hasRole('ROLE_G')")
-	public void salvar(@RequestBody TarefaRequestDTO tarefaRequest){
-		service.salvarTarefa(tarefaRequest);
+	@ResponseBody
+	@PreAuthorize("hasRole('ROLE_MST')")
+	public TarefaResponseDTO salvar(@RequestBody TarefaRequestDTO tarefaRequest){
+		return service.salvarTarefa(tarefaRequest);
 	}
 	
-	/* EndPoint Atualizar Tarefa */
 	@PutMapping(value = "/{id}")
-	@PreAuthorize("hasRole('ROLE_G')")
+	@PreAuthorize("hasRole('ROLE_MST')")
 	public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody TarefaRequestDTO tarefaRequest){
 		return ResponseEntity.ok(service.atualizarTarefa(tarefaRequest, id));
 	}
 	
 	@PutMapping(value = "/{id}/finalizar")
-	@PreAuthorize("hasRole('ROLE_G')")
+	@PreAuthorize("hasRole('ROLE_MST')")
 	public ResponseEntity<?> finalizar(@PathVariable Long id){
 		return ResponseEntity.ok(service.finalizarTarefa(id));
 	}
 	
 	@PutMapping(value = "/{id}/cancelar")
-	@PreAuthorize("hasRole('ROLE_G')")
+	@PreAuthorize("hasRole('ROLE_MST')")
 	public ResponseEntity<?> cancelar(@PathVariable Long id){
 		return ResponseEntity.ok(service.cancelarTarefa(id));
 	}
 	
-	/* EndPoint Excluir Tarefa */
 	@DeleteMapping(value = "/{id}")
-	@PreAuthorize("hasRole('ROLE_G')")
-	public ResponseEntity<?> delete(@PathVariable Long id){
-		service.deletatTarefa(id);
+	@PreAuthorize("hasRole('ROLE_MST')")
+	public ResponseEntity<?> deletar(@PathVariable Long id){
+		service.deletarTarefa(id);
 		return ResponseEntity.noContent().build();
 	}
 	

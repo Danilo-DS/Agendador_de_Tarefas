@@ -6,15 +6,16 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import lombok.AllArgsConstructor;
@@ -49,11 +50,13 @@ public class Usuario implements Serializable {
 	@Column(name = "TIPO_USUARIO", length = 4, nullable = false)
 	private String tipoUsuario;
 	
-
-	@OneToMany
-	@JoinTable(name = "TB_PERFIL_USUARIO",
-	   joinColumns =  @JoinColumn(name = "ID_USUARIO", foreignKey = @ForeignKey(name = "FK_USER_PERFIL")),//, referencedColumnName = "PK_USUARIO"),
-	   inverseJoinColumns = @JoinColumn(name = "ID_PERFIL", foreignKey = @ForeignKey(name = "FK_PERFIL_USER")))//, referencedColumnName = "PK_PERFIL_USUARIO"))
+	
+	@ManyToMany(cascade = CascadeType.REMOVE)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinTable(name = "TB_USUARIO_PERFIL",
+	   joinColumns =  @JoinColumn(name = "ID_USUARIO", foreignKey = @ForeignKey(name = "FK_USER_PERFIL")),
+	   inverseJoinColumns =  @JoinColumn(name = "ID_PERFIL", foreignKey = @ForeignKey(name = "FK_PERFIL_USER"))
+	)
 	private List<PerfilUsuario> perfis; 
 	
 	public String encriptPassword(String senha) {

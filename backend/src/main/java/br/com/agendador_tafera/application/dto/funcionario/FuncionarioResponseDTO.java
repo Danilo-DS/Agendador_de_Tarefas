@@ -1,7 +1,5 @@
 package br.com.agendador_tafera.application.dto.funcionario;
 
-import java.util.Date;
-
 import br.com.agendador_tafera.application.dto.empresa.EmpresaResponseDTO;
 import br.com.agendador_tafera.application.dto.endereco.EnderecoDTO;
 import br.com.agendador_tafera.application.dto.usuario.UsuarioResponseDTO;
@@ -15,13 +13,14 @@ import lombok.NoArgsConstructor;
 public class FuncionarioResponseDTO {
 	
 	private Long id;
+	
 	private String nome;
 	
 	private String cpf;
 	
 	private String pisPasep;
 	
-	private Date dataNascimento;
+	private String dataNascimento;
 	
 	private String celular;
 	

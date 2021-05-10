@@ -12,7 +12,7 @@ public class EnderecoService {
 	@Autowired
 	private EnderecoRepository enderecoRepository;
 	
-	public Endereco findEnderecoId(Long id) {
-		return enderecoRepository.findById(id).orElseThrow(() -> new RuntimeException(""));
+	public Endereco buscarEnderecoPorId(Long id) {
+		return enderecoRepository.findById(id).orElseThrow(() -> new RuntimeException("Error ao localizar endereço do Funcionario"));
 	}
 }

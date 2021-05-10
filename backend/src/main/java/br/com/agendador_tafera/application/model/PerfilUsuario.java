@@ -30,6 +30,8 @@ public class PerfilUsuario implements Serializable{
 	
 	@Column(name = "NM_PERFIL")
 	@Enumerated(EnumType.STRING)
-	public PerfilUS perfil;
+	private PerfilUS perfil;
+	
+	
 	
 }

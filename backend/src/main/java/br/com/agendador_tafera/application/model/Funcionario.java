@@ -1,8 +1,6 @@
 package br.com.agendador_tafera.application.model;
 
 import java.io.Serializable;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -41,13 +39,13 @@ public class Funcionario implements Serializable {
 	@Column(name = "NU_PIS_PASEP", length = 11)
 	private String pisPasep;
 	
-	@Column(name = "DATA_CADASTRO")
+	@Column(name = "DATA_CADASTRO", columnDefinition = "DATE DEFAULT TO_DATE(CAST(CURRENT_DATE AS TEXT), 'DD-MM-YYYY')")
 	private Date dataCadastro;
 	
-	@Column(name = "DATA_NASCIMENTO",nullable = false)
-	private Date dataNascimento;
+	@Column(name = "DATA_NASCIMENTO", length = 10, nullable = false)
+	private String dataNascimento;
 	
-	@Column(name = "CELULAR", length = 10, nullable = false)
+	@Column(name = "CELULAR", length = 11, nullable = false)
 	private String celular;
 	
 	@Column(name = "TELEFONE", length = 10)
@@ -61,17 +59,12 @@ public class Funcionario implements Serializable {
 	@JoinColumn(name = "EMPRESA_ID", foreignKey = @ForeignKey(name = "FK_FUNC_EMPRESA"))
 	private Empresa empresa;
 	
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade =  CascadeType.REMOVE)
 	@JoinColumn(name = "ID_USUARIO", foreignKey = @ForeignKey(name = "FK_FUNC_USUARIO"))
 	private Usuario usuario;
 	
-	public Date converteData(String data) {
-		try {
-			return new SimpleDateFormat("dd-MM-yyyy").parse(data);
-		}
-		catch (ParseException e) {
-			throw new RuntimeException("");
-		}
+	public String formatarData(String data) {
+		return data.replaceAll("/", "-");
 	}
 	
 }

@@ -13,12 +13,16 @@ import lombok.NoArgsConstructor;
 public class UsuarioResponseDTO {
 	
 	private Long id;
+	
 	private String nome;
+	
 	private String email;
-	private String telefone;
+	
 	private String celular;
+	
 	private String tipoUsuario;
-	private List<String> permissao;
+	
+	private List<PerfilUsuarioDTO> perfis;
 	
 	
 }

@@ -21,11 +21,10 @@ public class LoginService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		String em = email;
 		Usuario user = userRepository.findByEmail(em).orElseThrow(() -> new UsernameNotFoundException("Error email ou senha invalido"));
-		
+
 		return UserLogin.builder(toUserLogin(user));
 	}
 	
-	/* Converte um Obj do tipo Usuario em um obj de UsuarioLoginDTO */ 
 	private UserLogin toUserLogin(Usuario user) {
 		return ModelConvert.mapper().map(user, UserLogin.class);
 	}

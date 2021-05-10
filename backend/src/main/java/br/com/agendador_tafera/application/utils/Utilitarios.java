@@ -17,19 +17,31 @@ public class Utilitarios {
 	/* Mensagens e Exceções */
 	
 	/* Usuario */
-	public static final String ERROR_DELETAR_USUARIO = "Erro ao deletar usuario";
-	public static final String ERROR_USUARIO_ASSOCIADO_TAREFA = "Usuario está responsavel por uma tarefa";
-	public static final String ERROR_ATUALIZAR_USUARIO = "Não foi possível atualizar o usuario";
-	public static final String ERROR_BUSCAR_USUARIO = "Erro usuario não encontrado";
-//	public static final String UsuarioGestor = "G";
-//	public static final String UsuarioComum = "U";
-//	public static final String UsuarioON = "userAcessando";
+	public static final String ERROR_DELETAR_USUARIO = "Error ao deletar usuario.";
+	public static final String ERROR_USUARIO_ASSOCIADO_TAREFA = "Usuario está responsavel por uma tarefa.";
+	public static final String ERROR_ATUALIZAR_USUARIO = "Não foi possível atualizar o usuario.";
+	public static final String ERROR_BUSCAR_USUARIO = "Error usuario não encontrado.";
 	
+	/* Perfil Usuario */
+	public static final String ERROR_BUSCAR_PERFIL_USUARIO = "Error perfil não encontrado.";
+		
 	/* Tarefa */
-	public static final String ERROR_DELETAR_TAREFA = "Tarefa não Encontrada, exclusão não realizada";
-	public static final String ERROR_ATUALIZAR_TAREFA = "Erro ao Atualizar Atividade, Atividade ou Responsável não encontrado";
-	public static final String ERROR_BUSCAR_TAREFA = "Erro Tarefa não Encontrada";
-	public static final String ERROR_SALVAR_TAREFA = "Erro ao Agendar Atividade, Responsável não encontrada";
+	public static final String ERROR_DELETAR_TAREFA = "Tarefa não Encontrada, exclusão não realizada.";
+	public static final String ERROR_ATUALIZAR_TAREFA = "Error ao Atualizar Atividade, Atividade ou Responsável não encontrado.";
+	public static final String ERROR_BUSCAR_TAREFA = "Error Tarefa não Encontrada.";
+	public static final String ERROR_SALVAR_TAREFA = "Error ao Agendar Atividade, Responsável não encontrada.";
+	
+	/* Funcionario */
+	public static final String ERROR_BUSCAR_FUNCIONARIO = "Error Funcionario Não Encontrado.";
+	public static final String ERROR_ATUALIZAR_FUNCIONARIO = "Não foi possível atualizar o funcionario, o mesmo não foi encontrado!";
+	public static final String ERROR_SALVAR_FUNCIONARIO = "O CPF Já está sendo utilizado.";
+	public static final String ERROR_DELETAR_FUNCIONARIO = "Não foi possível deletar o funcionario, o mesmo não foi foi encontrado!";
+	
+	/* Empresa */
+	public static final String ERROR_BUSCAR_EMPRESA = "Error Empresa Não Encontrada.";
+	public static final String ERROR_ATUALIZAR_EMPRESA = "Não foi possível atualizar a Empresa, o mesmo não foi encontrado!";
+	public static final String ERROR_SALVAR_EMPRESA = "O CNPJ Já está sendo utilizado.";
+	public static final String ERROR_DELETAR_EMPRESA = "Não foi possível deletar empresa, o mesmo não foi foi encontrado!";
 	
 	/* EMAIL da API */
 	public static final String EMAIL_API = "pastel.systemcompany@gmail.com";
@@ -37,7 +49,12 @@ public class Utilitarios {
 	public static final String EMAIL_FAIL = "FAIL";
 	public static final String EMAIL_ENVIADO = "E-mail enviado com sucesso";
 	public static final String EMAIL_FALHOU = "Atividade Agendada !";
-	public static final String EMAIL_FALHOU_ATUALIZACAO = "Ativdade Atualizada !, mas ocorreu um erro ao enviar o e-mail";
+	public static final String EMAIL_FALHOU_ATUALIZACAO = "Ativdade Atualizada !, mas ocorreu um erro ao enviar o e-mail.";
+	
+	/* Erro Interno */
+	public static final String ERROR_INTERNO = "Desculpe, Ocorreu um erro. Tente novamente mais tarde!";
+	
+	/* ----------------------------------------------------------------------------------------------------------------------- */
 	
 	/* JWT */
 	
