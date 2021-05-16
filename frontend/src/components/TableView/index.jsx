@@ -1,17 +1,13 @@
 import {tabelaUsuario, tabelaTarefa} from '../../util'
-import { useContext } from 'react';
-import ContextFactory from '../../util/ContextFactory'
-
+import ModelList from '../ModalList';
 function TableView(props){
 	
-	const [context,setContext] = useContext(ContextFactory);
-	
-	function TypeTable(tipo){
-		if(tipo == tabelaUsuario){
+	function TipoTabela(tipo){
+		if(tipo === tabelaUsuario){
 			return MontaBodyUsuario();
 		}
 
-		if(tipo == tabelaTarefa){
+		if(tipo === tabelaTarefa){
 			return MontaBodyTarefa();
 		}
 	}
@@ -30,10 +26,10 @@ function TableView(props){
 	}
 
 	function MontaBodyTarefa(){
-		 return props.entidade.map((item) => 
+		 return	props.entidade.map((item) => 
 			<tr>
 				<td>{item.titulo}</td>
-				<td>{item.usuario.nome}</td>
+				<td align = "center"><ModelList titulo = "Usuarios Tarefa" lista = {item.usuario}/></td>
 				<td>{item.prioridade}</td>
 				<td>{item.statusTarefa}</td>
 				<td>{props.btnFinalizar}</td>
@@ -57,7 +53,7 @@ function TableView(props){
 						</tr>
 					</thead>
 					<tbody id = "table-view">
-						{TypeTable(props.tipoTabela)}	
+						{TipoTabela(props.tipoTabela)}	
 					</tbody>
 		</table>
     );

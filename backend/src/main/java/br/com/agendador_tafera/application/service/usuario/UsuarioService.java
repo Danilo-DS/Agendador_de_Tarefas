@@ -18,6 +18,8 @@ import br.com.agendador_tafera.application.exception.usuario.UsuarioException;
 import br.com.agendador_tafera.application.model.PerfilUsuario;
 import br.com.agendador_tafera.application.model.Usuario;
 import br.com.agendador_tafera.application.repository.UsuarioRepository;
+import br.com.agendador_tafera.application.service.empresa.EmpresaService;
+import br.com.agendador_tafera.application.service.funcionario.FuncionarioService;
 import br.com.agendador_tafera.application.service.perfilUsuario.PerfilService;
 import br.com.agendador_tafera.application.utils.Utilitarios;
 
@@ -30,9 +32,23 @@ public class UsuarioService {
 	@Autowired
 	private PerfilService perfilService;
 	
+	@Autowired
+	private EmpresaService empresaService;
+	
+	@Autowired
+	private FuncionarioService funcionarioService;
+	
 	@Transactional(readOnly = true)
 	public List<UsuarioResponseDTO> listarUsuarios(){
 		return toListUsuarioDto(userRepository.findAll());
+	}
+	
+	@Transactional(readOnly = true)
+	public List<UsuarioResponseDTO> listarUsuariosPorEmpresa(Long idEmpresa){
+		
+		return funcionarioService.listaFuncionariosEmpresa(
+					empresaService.buscarEmpresaPorId(idEmpresa).getCnpj()
+				).stream().map(f -> f.getUsuario()).collect(Collectors.toList());
 	}
 	
 	@Transactional(readOnly = true)

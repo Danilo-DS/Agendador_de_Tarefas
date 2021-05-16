@@ -34,19 +34,20 @@ public class AgendarTarefaController {
 	}
 	
 	@GetMapping(value = "/{id}")
-	@PreAuthorize("hasRole('ROLE_MST')")
+	@PreAuthorize("hasRole('ROLE_MST') or hasRole('ROLE_ADM') or hasRole('ROLE_EMP') or"
+			+ " hasRole('ROLE_GST') or hasRole('ROLE_FUNC')")
 	public ResponseEntity<?> buscarTarefa(@PathVariable Long id){
 		return ResponseEntity.ok(service.buscarTarefaPorId(id));
 	}
 	
 	@GetMapping(value = "/{id}/usuario")
-	@PreAuthorize("hasRole('ROLE_MST')")
+	@PreAuthorize("hasRole('ROLE_MST') or hasRole('ROLE_ADM') or hasRole('ROLE_FUNC')")
 	public ResponseEntity<?> listarTarefaUsuario(@PathVariable Long id){
 		return ResponseEntity.ok(service.listarTarefaPorUsuario(id));
 	}
 	
 	@GetMapping(value = "/{id}/empresa")
-	@PreAuthorize("hasRole('ROLE_MST')")
+	@PreAuthorize("hasRole('ROLE_MST') or hasRole('ROLE_EMP') or hasRole('ROLE_GST')")
 	public ResponseEntity<?> listarTarefaEmpresa(@PathVariable Long id){
 		return ResponseEntity.ok(service.listarTarefaPorEmpresa(id));
 	}
@@ -54,31 +55,31 @@ public class AgendarTarefaController {
 	@PostMapping
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@ResponseBody
-	@PreAuthorize("hasRole('ROLE_MST')")
+	@PreAuthorize("hasRole('ROLE_MST') or hasRole('ROLE_ADM') or hasRole('ROLE_EMP') or hasRole('ROLE_GST')")
 	public TarefaResponseDTO salvar(@RequestBody TarefaRequestDTO tarefaRequest){
 		return service.salvarTarefa(tarefaRequest);
 	}
 	
 	@PutMapping(value = "/{id}")
-	@PreAuthorize("hasRole('ROLE_MST')")
+	@PreAuthorize("hasRole('ROLE_MST') or hasRole('ROLE_ADM') or hasRole('ROLE_EMP') or hasRole('ROLE_GST')")
 	public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody TarefaRequestDTO tarefaRequest){
 		return ResponseEntity.ok(service.atualizarTarefa(tarefaRequest, id));
 	}
 	
 	@PutMapping(value = "/{id}/finalizar")
-	@PreAuthorize("hasRole('ROLE_MST')")
+	@PreAuthorize("hasRole('ROLE_MST') or hasRole('ROLE_ADM') or hasRole('ROLE_EMP') or hasRole('ROLE_GST')")
 	public ResponseEntity<?> finalizar(@PathVariable Long id){
 		return ResponseEntity.ok(service.finalizarTarefa(id));
 	}
 	
-	@PutMapping(value = "/{id}/cancelar")
+	@PutMapping("hasRole('ROLE_MST') or hasRole('ROLE_ADM') or hasRole('ROLE_EMP') or hasRole('ROLE_GST')")
 	@PreAuthorize("hasRole('ROLE_MST')")
 	public ResponseEntity<?> cancelar(@PathVariable Long id){
 		return ResponseEntity.ok(service.cancelarTarefa(id));
 	}
 	
 	@DeleteMapping(value = "/{id}")
-	@PreAuthorize("hasRole('ROLE_MST')")
+	@PreAuthorize("hasRole('ROLE_MST') or hasRole('ROLE_ADM') or hasRole('ROLE_EMP') or hasRole('ROLE_GST')")
 	public ResponseEntity<?> deletar(@PathVariable Long id){
 		service.deletarTarefa(id);
 		return ResponseEntity.noContent().build();

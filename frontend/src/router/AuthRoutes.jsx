@@ -1,15 +1,23 @@
 import { Route, Redirect } from "react-router-dom";
-import {homePath} from '../util';
-import Alerte from '../components/Alerts'
+import {homePath, semPermissaoPath} from '../util';
 
 const permissao = (path) => {
-    let pathsUser = [homePath]
-    let permissaoUsuario = localStorage.getItem('permissao').replace(/"/g, "");
+    let pathsUser = [homePath];
+    let permissaoUsuario = [];
     let autorizado = false;
+    let permissaoTela;
 
-    if( permissaoUsuario == "ROLE_U"){
+    permissaoUsuario.push(localStorage.getItem('permissao'));
+    permissaoUsuario.forEach(p => {
+        let permissao = p.replace(/"/g,"").replace("[","").replace("]","");
+        if(permissao === "ROLE_FUNC"){
+            permissaoTela = permissao; 
+        }
+    })
+
+    if(permissaoTela === "ROLE_FUNC" && permissaoUsuario.length === 1){
         pathsUser.forEach(e => {
-            if(e == path){
+            if(e === path){
                 autorizado = true;
             }
         })
@@ -26,10 +34,9 @@ export const PrivateRoutes = ({component : Component, ...rest}) => {
             permissao(rest.path) ? 
             (<Component {...props} />)
             :
-            (<Alerte />) // Analisar
-            
+            (<Redirect to = {{pathname : semPermissaoPath, state : {from : props.location}}} />) 
         }
     />
-    //<Redirect to = {{pathname : "/", state : {from : props.location} }}/>
-    //<Alerte tipo = "danger" exibir = {true} mensagem = "Ops! Você não tem permissão :(" />
+   
+    //<Alerta tipo = "danger" exibir = {true} mensagem = "Ops! Você não tem permissão :(" />
 }

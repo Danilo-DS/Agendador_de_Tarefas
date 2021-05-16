@@ -1,16 +1,16 @@
-import {useEffect, useContext} from 'react'
+import {useEffect, useState} from 'react'
 import ContextFactory from '../../util/ContextFactory'
 import TableView from '../../components/TableView';
 import TituloPage from '../../components/TituloPage';
 import {tabelaTarefa} from '../../util'
 import agendadasIcon from '../../assets/icons/AgendadasIcon.svg';
-import { useState } from 'react';
 import Button from '../../components/Button';
 import TarefaService from '../../services/TarefaService';
+import {BsCheckBox, BsFillXOctagonFill, BsFillTrashFill, BsPencil} from 'react-icons/bs'
 
 var listTarefa = [];
 
-const contextoTarefa = [{id : "", titulo : "", usuario : {nome : ""}, prioridade : "", statusTarefa : ""}];
+const contextoTarefa = [{id : "", titulo : "", usuarios : [{}], prioridade : "", statusTarefa : ""}];
 
 function Home(){
 	
@@ -39,20 +39,20 @@ function Home(){
 		<ContextFactory.Provider value = {[context, setContext]}>
 			<TableView titulo1 = 'Título' titulo2 = 'Usuario Responsáviel' titulo3 = 'Nível Prioridade' titulo4 = 'Situação Tarefa' entidade = {listTarefa} tipoTabela = {tabelaTarefa}
 				btnFinalizar = {
-					<Button classe = "btn btn-primary" id = "btnEditarUsuario" acaoButton 
-					valorButton = {null} tipo = "button" descricao = {<i className="fa fa-edit"></i>}/>
+					<Button classe = "btn btn-primary" id = "btnFinalizarTarefa" acaoButton 
+					valorButton = {null} tipo = "button" descricao = {<BsCheckBox/>}/>
 				}
 				btnCancelar = {
-					<Button classe = "btn btn-warning" id = "btnEditarUsuario" acaoButton 
-					valorButton = {null} tipo = "button" descricao = {<i className="fa fa-edit"></i>}/>
+					<Button classe = "btn btn-warning" id = "btnCancelarTarefa" acaoButton 
+					valorButton = {null} tipo = "button" descricao = {<BsFillXOctagonFill/>}/>
 				}
 				btnEditar = {
-					<Button classe = "btn btn-info" id = "btnEditarUsuario" acaoButton 
-					valorButton = {null} tipo = "button" descricao = {<i className="fa fa-edit"></i>}/>
+					<Button classe = "btn btn-info" id = "btnEditarTarefa" acaoButton 
+					valorButton = {null} tipo = "button" descricao = {<BsPencil/>}/>
 				}
 				btnDeletar = {
-					<Button classe = "btn btn-danger" id = "btnDeletarUsuario" acaoButton 
-					valorButton = {null} tipo = "button" descricao = {<i className="fa fa-trash"></i>}/>
+					<Button classe = "btn btn-danger" id = "btnDeletarTarefa" acaoButton 
+					valorButton = {null} tipo = "button" descricao = {<BsFillTrashFill/>}/>
 				}
 			/>
 		</ContextFactory.Provider>

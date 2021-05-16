@@ -30,8 +30,8 @@ public class CarregaDadosBD implements ApplicationRunner {
 			
 			perfilRepository.save(new PerfilUsuario(null, PerfilUS.ADMINISTRADOR));
 			perfilRepository.save(new PerfilUsuario(null, PerfilUS.EMPRESA));
-			perfilRepository.save(new PerfilUsuario(null, PerfilUS.GESTOR));
 			perfilRepository.save(new PerfilUsuario(null, PerfilUS.FUNCIONARIO));
+			perfilRepository.save(new PerfilUsuario(null, PerfilUS.GESTOR));
 			perfilRepository.save(new PerfilUsuario(null, PerfilUS.USUARIO_COMUM));
 			perfilRepository.save(new PerfilUsuario(null, PerfilUS.MASTER));
 			

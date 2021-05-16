@@ -1,18 +1,6 @@
-.alertError .alertSucesso {
-    margin: 2% 10% 0 10%; 
-    display: none;
-}
-
-.sucesso{
+#alert-action{
     text-align: center;
     font-size: 1.4rem;
-}
-
-.error{
-    text-align: center;
-    font-size: 1.4rem;
-}
-
-.logoTarefa{
-    margin-right: 1%;
+    position: absolute;
+    bottom: 0;
 }

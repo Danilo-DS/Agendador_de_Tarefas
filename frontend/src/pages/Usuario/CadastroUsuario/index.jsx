@@ -17,11 +17,11 @@ function CadastroUsuario(){
 
                     <Input classe = "col-md-3 mb-3" nmLabel = "telefone" descLabel = "Telefone Fixo" tipo = "number"
                     id = "telefone" legenda = "Número de Telefone" valorInput = {undefined} tamanho = "10" 
-                    restricao = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" componente = {null}/>
+                    restricao = {null} componente = {null}/>
 
                     <Input classe = "col-md-3 mb-3" nmLabel = "celular" descLabel = "Celular" tipo = "number"
                     id = "celular" legenda = "Número de Celular" valorInput = {undefined} tamanho = "10" 
-                    restricao = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" componente = {null}/>
+                    restricao = {null} componente = {null}/>
                 </div>
 
                 <div className="row">

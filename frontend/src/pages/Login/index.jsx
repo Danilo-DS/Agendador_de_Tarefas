@@ -1,5 +1,6 @@
 import LoginService from '../../services/LoginService';
-import {salvarCredenciais} from '../../util';
+import {salvarCredenciais, cadastrarEmpresaPath} from '../../util';
+import {Link} from 'react-router-dom';
 
 function LoginPage(){
 
@@ -10,7 +11,7 @@ function LoginPage(){
 
         LoginService.getAuthLogin(email, senha).then(function(resp){
             
-            salvarCredenciais(resp.data, event, resp);            
+           salvarCredenciais(resp.data, event, resp);            
            window.location.assign("/home");               
         }).catch(function(resp){
             console.error("Error ao Autenticar");
@@ -33,7 +34,10 @@ function LoginPage(){
 	      
 	      <button className="col-4 mb-3 btn btn-lg btn-primary btn-block" id="btnEntrar" onClick = {login}>Entrar</button>
 				
-        </form>	   
+        </form>
+        <Link to= {cadastrarEmpresaPath}>Cadastra-se como Empresa</Link>
+        <br/>
+        <Link to= "/cadastrar-empresa">Cadastra-se como Usuario</Link>
 	  </div>
     )
 }

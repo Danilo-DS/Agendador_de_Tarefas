@@ -42,6 +42,6 @@ public class AuthController {
 		
 		List<String> permissao = user.getAuthorities().stream().map(p -> p.getAuthority()).collect(Collectors.toList());
 		
-		return ResponseEntity.ok(new JwtResponse(token, user.getId(), user.getUsername(), permissao));
+		return ResponseEntity.ok(new JwtResponse(token, user.getId(), user.getUsername(), permissao, user.getIdEmpresa()));
 	}
 }

@@ -28,21 +28,28 @@ public class UsuarioController {
 	
 	/* EndPoint Listar todos os Usuarios*/
 	@GetMapping
-	@PreAuthorize("hasRole('ROLE_ADM')")
+	@PreAuthorize("hasRole('ROLE_MST')")
 	public ResponseEntity<?> listarUsuario(){
 		return ResponseEntity.ok(service.listarUsuarios());
 	}
 	
 	/* EndPoint Buscar Usuarios por id*/
 	@GetMapping(value = "/{id}")
-	@PreAuthorize("hasRole('ROLE_ADM')")
+	@PreAuthorize("hasRole('ROLE_MST') or hasRole('ROLE_ADM') or hasRole('ROLE_EMP') or"
+			+ " hasRole('ROLE_GST') or hasRole('ROLE_FUNC')")
 	public ResponseEntity<?> buscarUsuario(@PathVariable Long id){
 		return ResponseEntity.ok(service.buscarUsuarioPorId(id)); 
 	}
 	
+	@GetMapping(value = "/{idEmpresa}/empresa")
+	@PreAuthorize("hasRole('ROLE_MST') or hasRole('ROLE_EMP') or  hasRole('ROLE_GST')")
+	public ResponseEntity<?> listarUsuarioEmpresa(@PathVariable Long idEmpresa){
+		return ResponseEntity.ok(service.listarUsuariosPorEmpresa(idEmpresa));
+	}
+		
 	/* EndPoint Salvar Usuarios*/
 	@PostMapping
-	@PreAuthorize("hasRole('ROLE_ADM')")
+	@PreAuthorize("hasRole('ROLE_MST') or hasRole('ROLE_EMP') or  hasRole('ROLE_GST')")
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@ResponseBody
 	public UsuarioResponseDTO salvar(@RequestBody UsuarioRequestDTO usuarioRequest){
@@ -51,14 +58,15 @@ public class UsuarioController {
 	
 	/* EndPoint Atualizar dados do Usuario*/
 	@PutMapping(value = "/{id}")
-	@PreAuthorize("hasRole('ROLE_ADM') or hasRole('ROLE_U')")
+	@PreAuthorize("hasRole('ROLE_MST') or hasRole('ROLE_ADM') or hasRole('ROLE_EMP') or"
+			+ " hasRole('ROLE_GST') or hasRole('ROLE_FUNC')")
 	public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody UsuarioRequestDTO usuarioRequest){
 		return ResponseEntity.ok(service.atualizarUsuario(usuarioRequest, id));
 	}
 	
 	/* EndPoint Exclusão do usuario*/
 	@DeleteMapping(value = "/{id}")
-	@PreAuthorize("hasRole('ROLE_ADM')")
+	@PreAuthorize("hasRole('ROLE_MST') or hasRole('ROLE_ADM') or hasRole('ROLE_EMP') or hasRole('ROLE_GST')")
 	public ResponseEntity<?> deletar(@PathVariable Long id){
 		service.deletarUsuario(id);
 		return ResponseEntity.noContent().build(); 

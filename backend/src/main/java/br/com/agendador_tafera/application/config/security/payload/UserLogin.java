@@ -24,19 +24,21 @@ public class UserLogin implements UserDetails {
 	private String email;
 	private String senha;
 	private String tipoUsuario;
+	private Long idEmpresa;
 	private List<PerfilUsuario> perfis;
 	
 	private Collection<? extends GrantedAuthority> authorities;
 
-	public UserLogin (Long id, String email, String senha, String tipoUsuario, Collection<? extends GrantedAuthority> authorities) {
+	public UserLogin (Long id, String email, String senha, String tipoUsuario, Long idEmpresa, Collection<? extends GrantedAuthority> authorities) {
 		this.id = id;
 		this.email = email;
 		this.senha = senha;
+		this.idEmpresa = idEmpresa;
 		this.tipoUsuario = tipoUsuario;
 		this.authorities = authorities;
 	}
 	
-	public static UserLogin builder(UserLogin user) {
+	public static UserLogin builder(UserLogin user, Long idEmpresa) {
 		
 		List<GrantedAuthority> role = new ArrayList<>(); 
 		
@@ -51,6 +53,7 @@ public class UserLogin implements UserDetails {
 					user.getUsername(),
 					user.getPassword(),
 					user.getTipoUsuario(),
+					idEmpresa,
 					role
 			   );
 	}

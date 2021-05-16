@@ -1,7 +1,7 @@
-import {BrowserRouter, Route} from 'react-router-dom'
+import {BrowserRouter} from 'react-router-dom'
 import Footer from './components/Footer';
 import Routers from './router/Router';
-import PageNotFound from './pages/PageNotFound';
+//import PageNotFound from './pages/PageNotFound';
 
 function App() {
   return (

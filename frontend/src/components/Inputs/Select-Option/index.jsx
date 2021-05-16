@@ -9,7 +9,7 @@ function SelectOption(props){
                     <option value={props.valorOption}>{props.descOption}</option>
                     {
                         props.arrayOption.map((item) => 
-                            <option>{item.descricao}</option>)
+                            <option value= {item.id}>{item.descricao}</option>)
                     }
                 </select>
             </div>

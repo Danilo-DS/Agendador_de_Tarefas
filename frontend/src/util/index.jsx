@@ -5,21 +5,27 @@ export const urlBase = "http://localhost:8080/api/v1";
 export const auth = "/auth/token";
 
 // Usuario
-export const listarUsuarios = "/usuarios";
+export const listarUsuarios = "/usuario";
 
-export const SalvarUsuario = "/usuarios";
+export const listarUsuariosR = "/usuario/";
+export const responsavel = "/empresa"
 
-export const buscarUsuario = "/usuarios/";
+export const SalvarUsuario = "/usuario";
 
-export const atualizarUsuario = "/usuarios/";
+export const buscarUsuario = "/usuario/";
 
-export const deletarUsuarios = "/usuarios";
+export const atualizarUsuario = "/usuario/";
+
+export const deletarUsuarios = "/usuario";
 
 //Tarefas
 export const listarTarefas = "/agendar-tarefa";
 
-export const listarTarefaPor = "/agendar-tarefa/";
-export const usuarios = "/usuario";
+export const listarTarefasPorE = "/agendar-tarefa/";
+export const empresaT = "/empresa";
+
+export const listarTarefaPorU = "/agendar-tarefa/";
+export const usuarioT = "/usuario";
 
 export const buscarTarefa = "/agendar-tarefa/";
 
@@ -29,7 +35,7 @@ export const atualizarTarefa = "/agendar-tarefa";
 
 export const deletarTarefa = "/agendar-tarefa/";
 
-//Mount Header
+//Montar Header
 export default function montaHerader(){
     let type = localStorage.getItem('type');
     let token = localStorage.getItem('token');
@@ -37,10 +43,16 @@ export default function montaHerader(){
     return header;
 }
 
-//Save Credenciais
+export function isMaster(){
+    let permissaoUsuario = localStorage.getItem('permissao');
+    return permissaoUsuario.includes("ROLE_MST");
+}
+
+//Salvar Credenciais
 export function salvarCredenciais(credenciais){
     localStorage.setItem("id",JSON.stringify(credenciais.id));
     localStorage.setItem("email",JSON.stringify(credenciais.email));
+    localStorage.setItem("empresa",JSON.stringify(typeof credenciais.empresa === undefined ? 0 : credenciais.empresa));
     localStorage.setItem("permissao",JSON.stringify(credenciais.permissao)); 
     localStorage.setItem("token",JSON.stringify(credenciais.token));
     localStorage.setItem("type",JSON.stringify(credenciais.type));
@@ -57,8 +69,9 @@ export const homePath = "/home";
 export const listaUsuarioPath = "/listar-usuarios";
 export const cadastarUsuarioPath = "/cadastrar-usuario";
 export const cadastarTarefaPath = "/agendar";
+export const cadastrarEmpresaPath = "/cadastrar-empresa";
+export const semPermissaoPath = "/unothorized";
 
-
-//Type Table
-export const tabelaUsuario = "user";
-export const tabelaTarefa = "task";
+//Tipo Tabela
+export const tabelaUsuario = "usuario";
+export const tabelaTarefa = "tarefa";
