@@ -15,13 +15,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.agendador_tafera.application.dto.tarefa.ReuniaoRequestDTO;
 import br.com.agendador_tafera.application.dto.tarefa.TarefaRequestDTO;
 import br.com.agendador_tafera.application.dto.tarefa.TarefaResponseDTO;
 import br.com.agendador_tafera.application.service.tarefa.AgendarTarefaService;
 
 
 @RestController
-@RequestMapping(value = "/api/v1/agendar-tarefa")
+@RequestMapping(value = "/api/v1/agendar")
 public class AgendarTarefaController {
 	
 	@Autowired
@@ -52,12 +53,20 @@ public class AgendarTarefaController {
 		return ResponseEntity.ok(service.listarTarefaPorEmpresa(id));
 	}
 	
-	@PostMapping
+	@PostMapping("/tarefa")
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@ResponseBody
 	@PreAuthorize("hasRole('ROLE_MST') or hasRole('ROLE_ADM') or hasRole('ROLE_EMP') or hasRole('ROLE_GST')")
-	public TarefaResponseDTO salvar(@RequestBody TarefaRequestDTO tarefaRequest){
-		return service.salvarTarefa(tarefaRequest);
+	public TarefaResponseDTO agendarAtividade(@RequestBody TarefaRequestDTO tarefaRequest){
+		return service.salvarAtividade(tarefaRequest);
+	}
+	
+	@PostMapping("/reuniao")
+	@ResponseStatus(value = HttpStatus.CREATED)
+	@ResponseBody
+	@PreAuthorize("hasRole('ROLE_MST') or hasRole('ROLE_ADM') or hasRole('ROLE_EMP') or hasRole('ROLE_GST')")
+	public TarefaResponseDTO agendarReuniao(@RequestBody ReuniaoRequestDTO reuniaoRequest){
+		return service.salvarReuniao(reuniaoRequest);
 	}
 	
 	@PutMapping(value = "/{id}")

@@ -39,7 +39,7 @@ public class Funcionario implements Serializable {
 	@Column(name = "NU_PIS_PASEP", length = 11)
 	private String pisPasep;
 	
-	@Column(name = "DATA_CADASTRO", columnDefinition = "DATE DEFAULT TO_DATE(CAST(CURRENT_DATE AS TEXT), 'DD-MM-YYYY')")
+	@Column(name = "DATA_CADASTRO", columnDefinition = "DATE DEFAULT CURRENT_DATE")
 	private Date dataCadastro;
 	
 	@Column(name = "DATA_NASCIMENTO", length = 10, nullable = false)
@@ -60,7 +60,7 @@ public class Funcionario implements Serializable {
 	private Empresa empresa;
 	
 	@OneToOne(cascade =  CascadeType.REMOVE)
-	@JoinColumn(name = "ID_USUARIO", foreignKey = @ForeignKey(name = "FK_FUNC_USUARIO"))
+	@JoinColumn(name = "USUARIO_ID", foreignKey = @ForeignKey(name = "FK_FUNC_USUARIO"))
 	private Usuario usuario;
 	
 	public String formatarData(String data) {

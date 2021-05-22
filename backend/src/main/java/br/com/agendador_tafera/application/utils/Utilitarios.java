@@ -63,8 +63,11 @@ public class Utilitarios {
 	
 	/* Tipo Operação Email TAREFA*/
 	public static final String CRIACAO = "C";
+	public static final String REUNIAO = "R";
 	public static final String ATUALIZACAO = "U";
 	public static final String FINALIZACAO = "F";
 	public static final String CANCELAMENTO = "CC";
 	
+	/* URL Bot Whats */
+	public static final String URL_BOT_ENVIAR = "http://localhost:3333/enviar";
 }

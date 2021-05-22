@@ -11,15 +11,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class TarefaRequestDTO {
+public class ReuniaoRequestDTO {
 	
 	private String titulo;
 	
 	private String descricao;
 	
-	private List<UsuarioTarefaDTO> usuario;
+	private String dtReuniao;
+	
+	private UsuarioTarefaDTO usuario;
 	
 	private EmpresaDTO empresa;
+		
+	private List<String> convidadosEmail;
 	
-	private String prioridade;
+	private List<String> convidadosTelefone;
 }

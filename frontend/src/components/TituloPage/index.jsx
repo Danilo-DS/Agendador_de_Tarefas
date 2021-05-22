@@ -15,7 +15,8 @@ function Faixa(props){
 
 			<div className="col-md-5" id="divComponent">
 				{props.componente}
-			</div>
+			</div> 
+
 		</div>
     )
 }

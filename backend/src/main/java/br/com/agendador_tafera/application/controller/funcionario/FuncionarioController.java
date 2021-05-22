@@ -34,13 +34,13 @@ public class FuncionarioController {
 	}
 	
 	@GetMapping(value = "/empresa")
-	@PreAuthorize("hasRole('ROLE_MST')")
+	@PreAuthorize("hasRole('ROLE_MST') or hasRole('ROLE_EMP') or hasRole('ROLE_GST')")
 	public ResponseEntity<?> listaPorEmpresa(@RequestParam(name = "cnpjEmpresa") String cnpj) {
 		return ResponseEntity.ok(funcionarioService.listaFuncionariosEmpresa(cnpj));
 	}
 	
 	@GetMapping(value = "/{id}")
-	@PreAuthorize("hasRole('ROLE_MST')")
+	@PreAuthorize("hasRole('ROLE_MST') or hasRole('ROLE_EMP') or hasRole('ROLE_GST') or hasRole('ROLE_FUNC')")
 	public ResponseEntity<?> BuscarFuncionario(@PathVariable Long id) {
 		return ResponseEntity.ok(funcionarioService.buscarFuncionarioPorId(id));
 	}
@@ -54,14 +54,14 @@ public class FuncionarioController {
 	}	
 	
 	@PutMapping(value = "/{id}")
-	@PreAuthorize("hasRole('ROLE_MST')")
+	@PreAuthorize("hasRole('ROLE_MST') or hasRole('ROLE_EMP') or hasRole('ROLE_GST') or hasRole('ROLE_FUNC')")
 	@ResponseStatus(value = HttpStatus.OK)
 	public ResponseEntity<?> atualizar(@RequestBody FuncionarioRequestDTO funcionarioRequest, @PathVariable Long id) {
 		return ResponseEntity.ok(funcionarioService.atualizarFuncionario(funcionarioRequest, id));
 	}
 	
 	@DeleteMapping(value = "/{id}")
-	@PreAuthorize("hasRole('ROLE_MST')")
+	@PreAuthorize("hasRole('ROLE_MST') or hasRole('ROLE_EMP') or hasRole('ROLE_GST')")
 	public ResponseEntity<?> deletar(@PathVariable Long id) {
 		funcionarioService.deletarFuncionario(id);
 		return ResponseEntity.noContent().build();

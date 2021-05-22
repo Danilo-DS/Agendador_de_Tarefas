@@ -33,7 +33,7 @@ public class EmpresaController {
 	}
 	
 	@GetMapping(value = "/{id}")
-	@PreAuthorize("hasRole('ROLE_MST')")
+	@PreAuthorize("hasRole('ROLE_MST') or hasRole('ROLE_EMP')")
 	public ResponseEntity<?> BuscarEmpresa(@PathVariable Long id){
 		return ResponseEntity.ok(empresaService.buscarEmpresaPorId(id));
 	}
@@ -41,20 +41,19 @@ public class EmpresaController {
 	@PostMapping
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@ResponseBody
-	@PreAuthorize("hasRole('ROLE_MST')")
 	public EmpresaResponseDTO salvar(@RequestBody EmpresaRequestDTO empresaResquest){
 		return empresaService.salvarEmpresa(empresaResquest);
 	}	
 	
 	@PutMapping(value = "/{id}")
 	@ResponseStatus(value = HttpStatus.OK)
-	@PreAuthorize("hasRole('ROLE_MST')")
+	@PreAuthorize("hasRole('ROLE_MST') or hasRole('ROLE_EMP')")
 	public ResponseEntity<?> atualizar(@RequestBody EmpresaRequestDTO empresaResquest, @PathVariable Long id){
 		return ResponseEntity.ok(empresaService.atualizarEmpresa(empresaResquest, id));
 	}
 	
 	@DeleteMapping(value = "/{id}")
-	@PreAuthorize("hasRole('ROLE_MST')")
+	@PreAuthorize("hasRole('ROLE_MST') or hasRole('ROLE_EMP')")
 	public ResponseEntity<?> deletar(@PathVariable Long id) {
 		empresaService.deletarEmpresa(id);
 		return ResponseEntity.noContent().build();

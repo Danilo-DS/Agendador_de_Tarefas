@@ -44,11 +44,10 @@ public class UsuarioService {
 	}
 	
 	@Transactional(readOnly = true)
-	public List<UsuarioResponseDTO> listarUsuariosPorEmpresa(Long idEmpresa){
-		
-		return funcionarioService.listaFuncionariosEmpresa(
-					empresaService.buscarEmpresaPorId(idEmpresa).getCnpj()
-				).stream().map(f -> f.getUsuario()).collect(Collectors.toList());
+	public List<UsuarioResponseDTO> listarUsuariosPorEmpresa(Long idEmpresa){	
+		return  funcionarioService.listaFuncionariosEmpresa(
+				empresaService.buscarEmpresaPorId(idEmpresa).getCnpj()
+			).stream().map(f -> f.getUsuario()).collect(Collectors.toList());
 	}
 	
 	@Transactional(readOnly = true)

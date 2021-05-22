@@ -17,7 +17,7 @@ function TableView(props){
 			<tr>
 				<td>{item.nome}</td>
 				<td>{item.email}</td>
-				<td>{item.telefone + ' / ' + item.celular}</td>
+				<td>{item.celular}</td>
 				<td>{item.tipoUsuario}</td>
 				<td>{props.btnEditar}</td>
 				<td>{props.btnDeletar}</td>
@@ -29,7 +29,8 @@ function TableView(props){
 		 return	props.entidade.map((item) => 
 			<tr>
 				<td>{item.titulo}</td>
-				<td align = "center"><ModelList titulo = "Usuarios Tarefa" lista = {item.usuario}/></td>
+				<td align = "center">{item.tipoAgendamento !== "R" ? <ModelList titulo = "Usuarios Tarefa" lista = {item.usuario}/> : "" }</td>
+				<td>{item.tipoAgendamento !== "R" ? "Atividade" : "Reunião"}</td>
 				<td>{item.prioridade}</td>
 				<td>{item.statusTarefa}</td>
 				<td>{props.btnFinalizar}</td>
@@ -50,6 +51,7 @@ function TableView(props){
 							<th scope="col">{props.titulo2}</th>
 							<th scope="col">{props.titulo3}</th>
 							<th scope="col">{props.titulo4}</th>
+							<th scope="col">{props.titulo5}</th>
 						</tr>
 					</thead>
 					<tbody id = "table-view">

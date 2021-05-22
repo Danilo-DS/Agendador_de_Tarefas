@@ -22,8 +22,10 @@ import javax.persistence.ManyToOne;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
+import br.com.agendador_tafera.application.dto.tarefa.ReuniaoRequestDTO;
 import br.com.agendador_tafera.application.dto.tarefa.TarefaRequestDTO;
 import br.com.agendador_tafera.application.enums.StatusTarefa;
+import br.com.agendador_tafera.application.enums.TipoAgendamento;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -50,8 +52,8 @@ public class AgendarTarefa implements Serializable{
 	@ManyToMany(fetch = FetchType.EAGER)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinTable(name = "TB_TAREFAS_USUARIOS",
-		joinColumns = @JoinColumn(name = "USUARIO_ID", foreignKey = @ForeignKey(name = "FK_USER_TAREFA")),
-		inverseJoinColumns = @JoinColumn(name = "ID_PERFIL", foreignKey = @ForeignKey(name = "FK_TAREFA")))
+		joinColumns = @JoinColumn(name = "ID_TAREFA", foreignKey = @ForeignKey(name = "FK_TAREFA")),
+		inverseJoinColumns = @JoinColumn(name = "ID_USURIO", foreignKey = @ForeignKey(name = "FK_USUARIO_TAREFA")))
 	private List<Usuario> usuario;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -64,7 +66,7 @@ public class AgendarTarefa implements Serializable{
 	@Column(name = "TELEFONES_CONVIDADOS", columnDefinition = "VARCHAR(5000)")
 	private String convidadosTelefone;
 	
-	@Column(name = "PRIORIDADE", length = 5, nullable = false)
+	@Column(name = "PRIORIDADE", length = 5, nullable = true)
 	private String prioridade;
 	
 	@Column(name = "DT_CRIACAO_TAREFA", length = 10, nullable = false)
@@ -76,6 +78,12 @@ public class AgendarTarefa implements Serializable{
 	@Column(name = "DT_CANCELAMENTO_TAREFA", length = 10)
 	private String dtCancelamentoTarefa;
 	
+	@Column(name = "DT_REUNIAO", length = 10)
+	private String dtReuniao;
+	
+	@Column(name = "TIPO_AGENDAMENTO", length = 1)
+	private String tipoAgendamento;
+	
 	@Column(name = "STATUS_TAREFA", length = 11, nullable = false)
 	@Enumerated(EnumType.STRING)
 	private StatusTarefa statusTarefa;
@@ -84,8 +92,13 @@ public class AgendarTarefa implements Serializable{
 		return new SimpleDateFormat("yyyy-MM-dd").format(new Date()); 
 	}
 	
-	public static AgendarTarefa builder(Empresa empresa, List<Usuario> usuario, TarefaRequestDTO tarefaRequest) {
-		return new AgendarTarefa(null, tarefaRequest.getTitulo(), tarefaRequest.getDescricao(), usuario, empresa, tarefaRequest.getConvidadosEmail().toString().replace("[", "").replace("]", ""), 
-								tarefaRequest.getConvidadosTelefone().toString().replace("[", "").replace("]", ""), tarefaRequest.getPrioridade(), convertData(), null, null, StatusTarefa.AGENDADA);
+	public static AgendarTarefa builder(Empresa empresa, List<Usuario> usuario, TarefaRequestDTO tarefaRequest, TipoAgendamento agendamento) {
+		return new AgendarTarefa(null, tarefaRequest.getTitulo(), tarefaRequest.getDescricao(), usuario, empresa, null, 
+								null, tarefaRequest.getPrioridade(), convertData(), null, null, null, agendamento.tipo, StatusTarefa.AGENDADA);
+	}
+	
+	public static AgendarTarefa builder(Empresa empresa,  List<Usuario> usuario, ReuniaoRequestDTO reuniaoRequest, TipoAgendamento agendamento) {
+		return new AgendarTarefa(null, reuniaoRequest.getTitulo(), reuniaoRequest.getDescricao(), usuario , empresa, reuniaoRequest.getConvidadosEmail().toString().replace("[", "").replace("]", ""), 
+								reuniaoRequest.getConvidadosTelefone().toString().replace("[", "").replace("]", ""), null, convertData(), null, null, reuniaoRequest.getDtReuniao(), agendamento.tipo, StatusTarefa.AGENDADA);
 	}
 }

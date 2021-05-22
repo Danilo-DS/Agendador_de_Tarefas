@@ -1,5 +1,6 @@
 package br.com.agendador_tafera.application.service.tarefa;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,9 +13,11 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import br.com.agendador_tafera.application.config.ModelConvert;
+import br.com.agendador_tafera.application.dto.tarefa.ReuniaoRequestDTO;
 import br.com.agendador_tafera.application.dto.tarefa.TarefaRequestDTO;
 import br.com.agendador_tafera.application.dto.tarefa.TarefaResponseDTO;
 import br.com.agendador_tafera.application.enums.StatusTarefa;
+import br.com.agendador_tafera.application.enums.TipoAgendamento;
 import br.com.agendador_tafera.application.exception.tarefa.AgendarTarefaException;
 import br.com.agendador_tafera.application.model.AgendarTarefa;
 import br.com.agendador_tafera.application.model.Empresa;
@@ -24,6 +27,7 @@ import br.com.agendador_tafera.application.service.email.SendEmailService;
 import br.com.agendador_tafera.application.service.empresa.EmpresaService;
 import br.com.agendador_tafera.application.service.funcionario.FuncionarioService;
 import br.com.agendador_tafera.application.service.usuario.UsuarioService;
+import br.com.agendador_tafera.application.service.whatsapp.WhatsappService;
 import br.com.agendador_tafera.application.utils.Utilitarios;
 
 @Service
@@ -43,6 +47,9 @@ public class AgendarTarefaService {
 	
 	@Autowired
 	private FuncionarioService funcionarioService;
+	
+	@Autowired
+	private WhatsappService whatService;
 	
 	@Transactional(readOnly = true)
 	public List<TarefaResponseDTO> listarTarefas(){
@@ -65,7 +72,7 @@ public class AgendarTarefaService {
 	}
 	
 	@Transactional
-	public TarefaResponseDTO salvarTarefa(TarefaRequestDTO tarefaRequest) {
+	public TarefaResponseDTO salvarAtividade(TarefaRequestDTO tarefaRequest) {
 		
 		Empresa empresa = null;
 		List<Usuario> usuarios = null;
@@ -81,11 +88,39 @@ public class AgendarTarefaService {
 			usuarios = usuarioService.validarUsuariosTarefa(tarefaRequest.getUsuario());
 		}
 		
-		AgendarTarefa agendarTarefa = AgendarTarefa.builder(empresa, usuarios, tarefaRequest);
+		AgendarTarefa agendarTarefa = AgendarTarefa.builder(empresa, usuarios, tarefaRequest, TipoAgendamento.ATIVIDADE);
 		
 		agendaRepository.save(agendarTarefa);
 		
-		enviarEmailTarefa(agendarTarefa, Utilitarios.CRIACAO);
+		whatService.enviarMsg(pegarNumerosUsuarios(usuarios) , montaMensagem(agendarTarefa, Utilitarios.CRIACAO));
+		
+		enviarEmailTarefa(agendarTarefa, Utilitarios.CRIACAO,TipoAgendamento.ATIVIDADE);
+		
+		return tarefaToDto(agendarTarefa);
+			
+	}
+	
+	@Transactional
+	public TarefaResponseDTO salvarReuniao(ReuniaoRequestDTO reuniaoRequest) {
+		
+		Empresa empresa = null;
+		List<Usuario> usuarios = null;
+		if(!ObjectUtils.isEmpty(reuniaoRequest.getEmpresa())) {
+			empresa = empresaService.setarEmpresa(reuniaoRequest.getEmpresa().getCnpj(), reuniaoRequest.getEmpresa().getId());
+			//usuarios = usuarioService.validarUsuariosTarefa(Arrays.asList(reuniaoRequest.getUsuario()));
+			//funcionarioService.validaFuncionarioEmpresa(usuarios, empresa.getId());			
+		}
+		else {
+			usuarios = usuarioService.validarUsuariosTarefa(Arrays.asList(reuniaoRequest.getUsuario()));
+		}
+
+		AgendarTarefa agendarTarefa = AgendarTarefa.builder(empresa, usuarios, reuniaoRequest, TipoAgendamento.REUNIAO);
+		
+		agendaRepository.save(agendarTarefa);
+		
+		whatService.enviarMsg(reuniaoRequest.getConvidadosTelefone(), montaMensagem(agendarTarefa, Utilitarios.REUNIAO));
+		
+		enviarEmailTarefa(agendarTarefa, Utilitarios.REUNIAO,TipoAgendamento.REUNIAO);
 		
 		return tarefaToDto(agendarTarefa);
 			
@@ -115,7 +150,9 @@ public class AgendarTarefaService {
 		
 		agendaRepository.save(tarefaAtualizada);
 		
-		enviarEmailTarefa(tarefaAtualizada, Utilitarios.ATUALIZACAO);
+		whatService.enviarMsg(pegarNumerosUsuarios(usuarios), montaMensagem(tarefaAtualizada, Utilitarios.ATUALIZACAO));
+		
+		enviarEmailTarefa(tarefaAtualizada, Utilitarios.ATUALIZACAO,TipoAgendamento.ATIVIDADE);
 		
 		return tarefaToDto(tarefaAtualizada);
 	}
@@ -128,7 +165,14 @@ public class AgendarTarefaService {
 		
 		agendaRepository.save(tarefaFinalizada);
 		
-		enviarEmailTarefa(tarefaFinalizada, Utilitarios.FINALIZACAO);
+		enviarEmailTarefa(tarefaFinalizada, Utilitarios.FINALIZACAO,TipoAgendamento.ATIVIDADE);
+		
+		if(tarefaFinalizada.getTipoAgendamento().contains(TipoAgendamento.ATIVIDADE.tipo)) {
+			tarefaFinalizada.getUsuario().forEach(u -> {
+				AgendarTarefa proximaTarefa = agendaRepository.buscarProximaTarefa(u.getId());
+				enviarEmailTarefa(proximaTarefa, Utilitarios.CRIACAO,TipoAgendamento.ATIVIDADE);
+			});
+		}
 		
 		return tarefaToDto(tarefaFinalizada);
 	}
@@ -141,7 +185,7 @@ public class AgendarTarefaService {
 		
 		agendaRepository.save(tarefaFinalizada);
 		
-		enviarEmailTarefa(tarefaFinalizada, Utilitarios.CANCELAMENTO);
+		enviarEmailTarefa(tarefaFinalizada, Utilitarios.CANCELAMENTO, TipoAgendamento.ATIVIDADE);
 		
 		return tarefaToDto(tarefaFinalizada);
 	}
@@ -170,26 +214,39 @@ public class AgendarTarefaService {
 		return ModelConvert.mapper().map(tarefa, TarefaResponseDTO.class);
 	}
 	
-	private String montaCorpoEmail(AgendarTarefa tarefa, String tipoEmail) {
+	private String montaMensagem(AgendarTarefa tarefa, String tipoOperacao) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("Descrição da Tarefa: " + tarefa.getDescricao());
-		sb.append("Nével de Prioridade: " + tarefa.getPrioridade());
-		sb.append("Situação da Tarefa: " + tarefa.getStatusTarefa());
+		
+		if(!tipoOperacao.equals(Utilitarios.REUNIAO)) {
+			sb.append("Descrição da Tarefa: " + tarefa.getDescricao());
+			sb.append("\nNével de Prioridade: " + tarefa.getPrioridade());
+			sb.append("\nSituação da Tarefa: " + tarefa.getStatusTarefa());
+		}
 		
 		if(StringUtils.hasText(tarefa.getDtCancelamentoTarefa())) {
-			sb.append("Data Cancelamento: " + tarefa.getDtCancelamentoTarefa());
+			sb.append("\nData Cancelamento: " + tarefa.getDtCancelamentoTarefa());
 		}
 		
 		if(StringUtils.hasText(tarefa.getDtFinalizacaoTarefa())) {
-			sb.append("Data Finalização: " + tarefa.getDtFinalizacaoTarefa());
+			sb.append("\nData Finalização: " + tarefa.getDtFinalizacaoTarefa());
 		}
 		
-		if(tipoEmail.equals(Utilitarios.ATUALIZACAO)) {
-			sb.append("Data Criação: " + tarefa.getDtCriacaoTarefa());
+		if(tipoOperacao.equals(Utilitarios.ATUALIZACAO)) {
+			sb.append("\nData Criação: " + tarefa.getDtCriacaoTarefa());
+		}
+		
+		if(tipoOperacao.equals(Utilitarios.REUNIAO)) {
+			sb.append("Título Informativo: " + tarefa.getDescricao());
+			sb.append("\nInformações da Reunão: " + tarefa.getDescricao());
+			sb.append("\nData da Reunião: " + tarefa.getDtReuniao());
 		}
 		
 		return sb.toString();
 		
+	}
+	
+	private List<String> pegarNumerosUsuarios(List<Usuario> usuarios){
+		return usuarios.stream().map(u -> StringUtils.hasText(u.getCelular()) ? u.getCelular() : "000" ).collect(Collectors.toList());
 	}
 	
 	private AgendarTarefa atualizarDados(AgendarTarefa tarefa, TarefaRequestDTO tarefaRequest) {
@@ -198,15 +255,15 @@ public class AgendarTarefaService {
 		tarefa.setDescricao(StringUtils.hasText(tarefaRequest.getDescricao()) ? tarefaRequest.getDescricao() : tarefa.getDescricao());
 		tarefa.setUsuario(usuarioService.validarUsuariosTarefa(tarefaRequest.getUsuario()));
 		//tarefa.setEmpresa(empresaService.setarEmpresa(tarefaRequest.getEmpresa().getCnpj(), tarefaRequest.getEmpresa().getId()));
-		tarefa.setConvidadosEmail(CollectionUtils.isEmpty(tarefaRequest.getConvidadosEmail()) ? tarefaRequest.getConvidadosEmail().toString() : tarefa.getConvidadosEmail().toString());
-		tarefa.setConvidadosTelefone(CollectionUtils.isEmpty(tarefaRequest.getConvidadosTelefone()) ? tarefaRequest.getConvidadosTelefone().toString() : tarefa.getConvidadosTelefone().toString());
+		//tarefa.setConvidadosEmail(CollectionUtils.isEmpty(tarefaRequest.getConvidadosEmail()) ? tarefaRequest.getConvidadosEmail().toString() : tarefa.getConvidadosEmail().toString());
+		//tarefa.setConvidadosTelefone(CollectionUtils.isEmpty(tarefaRequest.getConvidadosTelefone()) ? tarefaRequest.getConvidadosTelefone().toString() : tarefa.getConvidadosTelefone().toString());
 		tarefa.setPrioridade(StringUtils.hasText(tarefaRequest.getPrioridade()) ? tarefaRequest.getPrioridade() : tarefa.getPrioridade());
 		
 		return tarefa;
 	}	
 	
-	private void enviarEmailTarefa(AgendarTarefa tarefa, String tipoOperacaoEmail) {
-		List<String> emailsNaoEnviados = emailService.enviarEmail(tarefa.getTitulo(), montaCorpoEmail(tarefa, tipoOperacaoEmail), tarefa.getUsuario());
+	private void enviarEmailTarefa(AgendarTarefa tarefa, String tipoOperacao, TipoAgendamento tipo) {
+		List<String> emailsNaoEnviados = emailService.enviarEmail(tarefa.getTitulo(), montaMensagem(tarefa, tipoOperacao), (tipo.compareTo(TipoAgendamento.REUNIAO) == 0) ? Arrays.asList(tarefa.getConvidadosEmail().split(",")) : tarefa.getUsuario(), tipo);
 		
 		if (!CollectionUtils.isEmpty(emailsNaoEnviados)) {
 			new AgendarTarefaException(Utilitarios.EMAIL_FALHOU, emailsNaoEnviados, HttpStatus.FAILED_DEPENDENCY);

@@ -44,7 +44,7 @@ public class FuncionarioService {
 	}
 	
 	@Transactional(readOnly = true)
-	public List<FuncionarioResponseDTO> listaFuncionariosEmpresa(String cnpjEmpresa) {		
+	public List<FuncionarioResponseDTO> listaFuncionariosEmpresa(String cnpjEmpresa) {			
 		return toListFuncionarioDto(funcionarioRepository.findByEmpresaCnpj(cnpjEmpresa));
 	}
 	

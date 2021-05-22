@@ -9,8 +9,8 @@ function CheckBox(props){
 
     function checkBox(){
         return (
-            <label className="list-group-item">
-                <input className="custom-control-input" type="checkbox" value={props.valor}/>
+            <label className="list-group-item espaco-label">
+                <input className="form-check-input " type="checkbox" value={props.valor}/>
                 {props.descricao}
             </label>
         )
@@ -18,8 +18,8 @@ function CheckBox(props){
 
     function listaCheckBox(){
         return props.objCheck.map((item) => 
-            <label className="list-group-item">
-                <input className="form-check-input me-1" type="checkbox" value={item.valor}/>
+            <label className="list-group-item espaco-label">
+                <input className="form-check-input" type="checkbox" value={item.valor} onClick = {props.acaoCheck}/>
                 {item.descricao}
             </label>
         )

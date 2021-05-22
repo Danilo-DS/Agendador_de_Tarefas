@@ -8,10 +8,12 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import br.com.agendador_tafera.application.enums.TipoAgendamento;
 import br.com.agendador_tafera.application.model.Usuario;
 import br.com.agendador_tafera.application.utils.Utilitarios;
 
 @Service
+@SuppressWarnings("unchecked")
 public class SendEmailService{
 	
 	@Autowired
@@ -20,16 +22,25 @@ public class SendEmailService{
 	private List<String> emailNaoEnviado;
 	
 	private SimpleMailMessage msg;
-	/*Envia email para usuario responsavel pela tarefa
-	 * @param Titulo da tarefa
-	 * @param Corpo da mensagem exp: Descrição, prioridade da tarefa, etc.
-	 * @param Email do usuario responsável
-	 * @return OK para enviado e FAIL se ocorrer algum problema*/
-	public List<String> enviarEmail(String Titulo, String corpoMensage, List<Usuario> emailsDesnitario){
-		
-		emailNaoEnviado = new ArrayList<>();; 
 
-		emailsDesnitario.forEach(dest -> {
+	
+	public List<String> enviarEmail(String Titulo, String corpoMensage, List<?> emailsDesnitario, TipoAgendamento tipo){
+		
+		emailNaoEnviado = new ArrayList<>(); 
+		
+		if(tipo.compareTo(TipoAgendamento.ATIVIDADE) == 0) {
+			enviarEmailsUsuario(Titulo, corpoMensage, (List<Usuario>) emailsDesnitario);			
+		}
+		else {
+			enviarEmailsConvidados(Titulo, corpoMensage, (List<String>) emailsDesnitario);
+		}
+		
+		
+		return emailNaoEnviado; 
+	}
+	
+	private void enviarEmailsUsuario(String Titulo, String corpoMensage, List<Usuario> emails){
+		emails.forEach(dest -> {
 			try {
 				msg = new SimpleMailMessage();
 				
@@ -44,8 +55,23 @@ public class SendEmailService{
 			}
 			
 		});
-		
-		return emailNaoEnviado; 
 	}
 	
+	private void enviarEmailsConvidados(String Titulo, String corpoMensage, List<String> emails){
+		emails.forEach(dest -> {
+			try {
+				msg = new SimpleMailMessage();
+				
+				msg.setSubject(Titulo);
+				msg.setText(corpoMensage);
+				msg.setTo(dest);
+				msg.setFrom(Utilitarios.EMAIL_API);
+				enviarEmail.send(msg);
+			}
+			catch (Exception e) {
+				emailNaoEnviado.add(dest);
+			}
+			
+		});
+	}
 }

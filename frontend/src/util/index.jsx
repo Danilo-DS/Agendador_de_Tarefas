@@ -7,8 +7,12 @@ export const auth = "/auth/token";
 // Usuario
 export const listarUsuarios = "/usuario";
 
+
 export const listarUsuariosR = "/usuario/";
 export const responsavel = "/empresa"
+
+export const listarUsuariosPorE = "/usuario/";
+export const empresaU = "/empresa"
 
 export const SalvarUsuario = "/usuario";
 
@@ -19,21 +23,23 @@ export const atualizarUsuario = "/usuario/";
 export const deletarUsuarios = "/usuario";
 
 //Tarefas
-export const listarTarefas = "/agendar-tarefa";
+export const listarTarefas = "/agendar";
 
-export const listarTarefasPorE = "/agendar-tarefa/";
+export const listarTarefasPorE = "/agendar/";
 export const empresaT = "/empresa";
 
-export const listarTarefaPorU = "/agendar-tarefa/";
+export const listarTarefaPorU = "/agendar/";
 export const usuarioT = "/usuario";
 
-export const buscarTarefa = "/agendar-tarefa/";
+export const buscarTarefa = "/agendar/";
 
-export const salvarTarefa = "/agendar-tarefa";
+export const salvarTarefa = "/agendar/tarefa";
 
-export const atualizarTarefa = "/agendar-tarefa";
+export const salvarReuniao = "/agendar/reuniao";
 
-export const deletarTarefa = "/agendar-tarefa/";
+export const atualizarTarefa = "/agendar";
+
+export const deletarTarefa = "/agendar/";
 
 //Montar Header
 export default function montaHerader(){
@@ -48,11 +54,16 @@ export function isMaster(){
     return permissaoUsuario.includes("ROLE_MST");
 }
 
+export function isEmpresaOuGestor(){
+    let permissaoUsuario = localStorage.getItem('permissao');
+    return permissaoUsuario.includes("ROLE_EMP") || permissaoUsuario.includes("ROLE_GST");
+}
+
 //Salvar Credenciais
 export function salvarCredenciais(credenciais){
     localStorage.setItem("id",JSON.stringify(credenciais.id));
     localStorage.setItem("email",JSON.stringify(credenciais.email));
-    localStorage.setItem("empresa",JSON.stringify(typeof credenciais.empresa === undefined ? 0 : credenciais.empresa));
+    localStorage.setItem("empresa",JSON.stringify(credenciais.empresa === undefined ? 0 : credenciais.empresa));
     localStorage.setItem("permissao",JSON.stringify(credenciais.permissao)); 
     localStorage.setItem("token",JSON.stringify(credenciais.token));
     localStorage.setItem("type",JSON.stringify(credenciais.type));

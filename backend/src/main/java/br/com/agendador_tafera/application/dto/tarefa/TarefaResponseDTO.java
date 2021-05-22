@@ -27,7 +27,13 @@ public class TarefaResponseDTO {
 	
 	private EmpresaResponseDTO empresa;
 	
+	private String tipoAgendamento;
+	
 	private String prioridade;
+	
+	private String dtCriacaoTarefa;
+	
+	private String dtReuniao;
 	
 	private String statusTarefa;
 	

@@ -1,12 +1,17 @@
 import axios from 'axios';
-import {urlBase,listarUsuarios} from '../util'
-import MontaHerader from '../util'
+import {urlBase,listarUsuarios, isMaster, listarUsuariosPorE,empresaU} from '../util'
+import MontarHeader from '../util'
 
 class UsuarioService{
 
     getUsuarios(){
-        return axios.get(urlBase + listarUsuarios, MontaHerader());
+        if(isMaster()){
+            return axios.get(urlBase + listarUsuarios, MontarHeader());
+        }
+        let buscarIdEmpresa = localStorage.getItem("empresa");
+        return axios.get(urlBase + listarUsuariosPorE + buscarIdEmpresa + empresaU, MontarHeader());
     }
+
 }
 
 export default new UsuarioService();
