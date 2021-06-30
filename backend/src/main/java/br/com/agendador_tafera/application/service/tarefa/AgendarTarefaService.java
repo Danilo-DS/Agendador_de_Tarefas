@@ -236,7 +236,7 @@ public class AgendarTarefaService {
 		}
 		
 		if(tipoOperacao.equals(Utilitarios.REUNIAO)) {
-			sb.append("Título Informativo: " + tarefa.getDescricao());
+			sb.append("Título Informativo: " + tarefa.getTitulo());
 			sb.append("\nInformações da Reunão: " + tarefa.getDescricao());
 			sb.append("\nData da Reunião: " + tarefa.getDtReuniao());
 		}

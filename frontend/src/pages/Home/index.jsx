@@ -12,15 +12,16 @@ import {BsCheckBox, BsFillXOctagonFill, BsFillTrashFill, BsPencil,BsListCheck} f
 
 var listTarefa = [];
 
-const contextoTarefa = [{id : "1", titulo : "tese", usuario : [{}], prioridade : "a", statusTarefa : ""}];
+const contextoTarefa = [{id : "", titulo : "", usuario : [{}], prioridade : "", statusTarefa : ""}];
 
 function Home(){
 	
 	const [context, setContext] = useState(contextoTarefa);
-
+	
 	useEffect(()=> {
-		TarefaService.getTarefas().then(function(resp){
+		TarefaService.getTarefas().then(function(resp){			
 			if(listTarefa.length != resp.data.length){
+				listTarefa = []
 				resp.data.forEach(obj => {
 					listTarefa.push(obj)
 				});

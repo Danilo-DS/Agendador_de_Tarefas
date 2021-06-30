@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import FadeIn from 'react-fade-in';
+import { toast } from 'react-toastify';
 import agendarIcon from '../../assets/icons/AgendarIcon.svg';
 import TituloPage from '../../components/TituloPage';
 import Input from '../../components/Inputs/Normal Input';
@@ -13,6 +14,8 @@ import RadioButton from '../../components/Inputs/Radio';
 import TarefaService from '../../services/TarefaService';
 import ContextFactory from '../../util/ContextFactory';
 import { isEmpresaOuGestor } from '../../util';
+import Alerta from '../../components/Alerts';
+
 import './style.css';
 
 
@@ -183,10 +186,12 @@ function cadastraReuniao(){
         console.info("Reuniao Registrada com Sucesso!");
         console.info("Codigo Http: ", resp.status);
         console.info("Msg: ", resp.statusText);
+        Alerta("Reunião Agendada com Sucesso!", toast.TYPE.SUCCESS);
     }).catch(function(resp){
         console.error("Ocorreu um erro ao salvar reuniao!");
         console.error("Codigo Http: ", resp.status);
         console.error("Msg: ", resp.statusText);
+        Alerta(`Ops! Ocorreu um error: ${resp.statusText}`, toast.TYPE.ERROR);
     });
 
 }
@@ -217,10 +222,12 @@ console.info(atividade);
         console.info("Atividade Registrada com Sucesso!");
         console.info("Codigo Http: ", resp.status);
         console.info("Msg: ", resp.statusText);
+        Alerta("Atividade Registrada com Sucesso!", toast.TYPE.SUCCESS);
     }).catch(function(resp){
         console.error("Ocorreu um erro ao salvar a atividade!");
         console.error("Codigo Http: ", resp.status);
         console.error("Msg: ", resp.statusText);
+        Alerta(`Ops! Ocorreu um error: ${resp.statusText}`, toast.TYPE.ERROR);
     });
 }
 

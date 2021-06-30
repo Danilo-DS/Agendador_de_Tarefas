@@ -1,6 +1,7 @@
 import {BrowserRouter} from 'react-router-dom'
 import Footer from './components/Footer';
 import Routers from './router/Router';
+import {ToastContainer } from 'react-toastify';
 //import PageNotFound from './pages/PageNotFound';
 
 function App() {
@@ -13,7 +14,7 @@ function App() {
 
         <Footer/>
       </div>
-      
+      <ToastContainer/>
     </BrowserRouter>
   );
 }

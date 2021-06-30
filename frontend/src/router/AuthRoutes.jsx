@@ -37,6 +37,4 @@ export const PrivateRoutes = ({component : Component, ...rest}) => {
             (<Redirect to = {{pathname : semPermissaoPath, state : {from : props.location}}} />) 
         }
     />
-   
-    //<Alerta tipo = "danger" exibir = {true} mensagem = "Ops! Você não tem permissão :(" />
 }
